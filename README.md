@@ -25,7 +25,7 @@ The card shows existing Home Assistant entities belonging to the selected Dreame
 
 ### Operation
 
-The first tab prioritizes daily operation. Cleaning/wash/dry settings are grouped to avoid a long control panel. Unsupported and unavailable actions are not offered as working capabilities.
+The first tab prioritizes daily operation. Cleaning/wash/dry, return-to-wash, scheduling, temperature and arm settings are grouped to avoid a long control panel. They appear only when the integration provides matching device entities. Unsupported and unavailable actions are not offered as working capabilities.
 
 ### Device status
 
@@ -40,7 +40,7 @@ The maintenance tab covers filter and front roller-brush lifetime, water warning
 - The card is intended for models represented by the [Dreame Wet & Dry integration](https://github.com/matanmesika/dreame-wet-dry-vacuum-home-assistant). The visual editor provides **H14**, **H15**, or automatic model selection.
 - **H15 Pro Heat** (`dreame.hold.w2449e`) mapping is incomplete and still experimental. Some write actions, alert meanings, and readbacks require physical confirmation.
 - Existing H14 mappings are preserved by the *integration*; the card does not change integration-side mappings.
-- Device/entity registry access is needed for automatic selection; individual entities can be explicitly configured in the editor.
+- Device/entity registry access is needed for automatic selection; individual entities can be explicitly configured in the editor. With a specific device selected, **write-capable controls must belong to that Dreame device**; read-only helper sensors may be overridden for display.
 - No phone/browser/live Home Assistant acceptance test has been recorded for this release candidate. A green unit-test run is not equivalent to an end-to-end test.
 
 ## Install and update through HACS (recommended)
@@ -77,7 +77,7 @@ configure only **real** HA device/entity IDs.
 
 **Updates:** After this repository is added, updates to the default branch
 can be downloaded again through HACS; no manual JS copying is necessary.
-No release or versioned stability guarantee is implied.
+No release or versioned stability guarantee is implied. The card must be tested on real H15/H14 devices before tagging a stable release.
 
 ### Manual fallback (only when HACS is unavailable)
 

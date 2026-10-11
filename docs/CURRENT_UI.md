@@ -2,8 +2,9 @@
 
 ## Source of truth: the actual H15 Pro Heat card
 
-The currently distributed card is `www/dreame-device-card.js`, mirrored
-**byte-for-byte** to `dashboard-release/dist/dreame-device-card.js`.
+The installable card in this repository is `dist/dreame-device-card.js`,
+originally copied byte-for-byte from the integration development's
+`www/dreame-device-card.js`.
 This UI was compared with an H15 Pro Heat iPhone Home Assistant screenshot
 provided by the project owner on October 11, 2026.
 
