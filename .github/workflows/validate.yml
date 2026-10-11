@@ -1,0 +1,53 @@
+name: Validate Dreame Device Card
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dashboard:
+    name: Dashboard JavaScript and packaging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check distributed JavaScript syntax
+        run: node --check dist/dreame-device-card.js
+      - name: Run regression tests
+        run: node --test tests/test_device_card.cjs
+      - name: Validate HACS product layout
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const manifest = JSON.parse(fs.readFileSync('hacs.json', 'utf8'));
+          const repository = 'dreame-device-card';
+          if (!manifest.name || manifest.filename !== repository + '.js') {
+            throw new Error('HACS name/filename does not match the repository');
+          }
+          const card = path.join('dist', manifest.filename);
+          if (!fs.statSync(card).size || !fs.existsSync('README.md')) {
+            throw new Error('Missing HACS dashboard artifacts');
+          }
+          if (!fs.readFileSync(card, 'utf8').includes('customElements.define("dreame-device-card"')) {
+            throw new Error('The expected card element is missing');
+          }
+          for (const invalid of ['custom_components', 'icon.png', 'logo.png']) {
+            if (fs.existsSync(invalid)) throw new Error('Integration files must not be inside Dashboard');
+          }
+          NODE
+
+  hacs:
+    name: HACS Dashboard validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hacs/action@main
+        with:
+          category: plugin
