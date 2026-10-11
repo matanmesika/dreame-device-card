@@ -14,3 +14,5 @@
 - Verify that integration icon/logo assets are separate from the Lovelace card and are not shipped with the standalone HACS Dashboard.
 
 - Publish the tested card and its documentation at the root of the dedicated HACS Dashboard repository. HACS Custom Repository installs from the default branch; no tagged stable release yet.
+
+- Harden write-target ownership checks, stale async updates, device switching and H15 settings visibility; no new devices, sensors, API calls or cloud commands.
