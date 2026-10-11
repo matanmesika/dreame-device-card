@@ -39,3 +39,18 @@ shown only for entities exposed by the installed integration.
 
 Source reference for card parity:
 https://github.com/matanmesika/dreame-wet-dry-vacuum-home-assistant/tree/release/dreame-card-standalone-prep/dashboard-release
+
+
+## GitHub metadata check (for HACS validation)
+
+The repository **About** section must contain a description and accurate
+GitHub topics. Recommended topics: `home-assistant`, `hacs`,
+`lovelace`, `dashboard`, `dreame`, `custom-card` and `vacuum`.
+
+Avoid mistyped topic labels such as `deshboard` or `lovlace-card`.
+These metadata fields are set through the GitHub repository About editor;
+they are not controlled by `hacs.json`.
+
+The HACS validation action can be rerun from GitHub Actions. A passing
+GitHub Action verifies metadata and distribution layout; it does not
+replace a real-device H14/H15 test or automatic public HACS listing.
