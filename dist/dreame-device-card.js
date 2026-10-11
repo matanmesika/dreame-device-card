@@ -311,6 +311,9 @@ class DreameDeviceCard extends HTMLElement {
     for (const unsubscribe of this._registryUnsubscribers || []) unsubscribe();
     this._registryUnsubscribers = [];
     this._registryConnection = connection;
+    // Reconnects replace the Home Assistant WS connection without changing
+    // card config. Always refresh device IDs on the new connection.
+    this._resolved = false;
     for (const type of ["entity_registry_updated", "device_registry_updated"]) {
       Promise.resolve(connection.subscribeEvents(() => {
         registryCache.delete(connection);
@@ -825,8 +828,16 @@ class DreameDeviceCardEditor extends HTMLElement {
     const selected = this._config.entities?.[role] || "";
     const domain = profileRoles(this._config.model === "auto" ? deviceProfile((this._devices || []).find((d) => d.id === this._config.device_id), this._entries) : this._config.model)[role]?.[0];
     if (!domain) return "";
-    const entries = Object.entries(this._hass?.states || {}).filter(([id]) => id.startsWith(`${domain}.`));
-    if (selected && !entries.some(([id]) => id === selected)) entries.unshift([selected, { attributes: {} }]);
+    // Manual read-only helpers can come from elsewhere. Controls must be
+    // bound to the selected Dreame, so exclude other appliances from pickers.
+    const restrict = this._config.device_id && ["button", "select", "switch", "number"].includes(domain);
+    const matching = restrict ? new Set((this._entries || []).filter((e) => e.device_id === this._config.device_id &&
+      e.platform === DREAME_DOMAIN && !e.disabled_by && !e.hidden_by).map((e) => e.entity_id)) : null;
+    const entries = Object.entries(this._hass?.states || {}).filter(([id]) => id.startsWith(`${domain}.`) &&
+      (!matching || matching.has(id)));
+    if (selected && (!matching || matching.has(selected)) && !entries.some(([id]) => id === selected)) {
+      entries.unshift([selected, { attributes: {} }]);
+    }
     const options = entries.sort(([a], [b]) => a.localeCompare(b)).map(([id, state]) => `<option value="${escapeHTML(id)}" ${id === selected ? "selected" : ""}>${escapeHTML(state.attributes?.friendly_name ? `${state.attributes.friendly_name} — ${id}` : id)}</option>`).join("");
     return `<label>${escapeHTML(this._t(role))}<select data-role="${role}"><option value="" ${!selected ? "selected" : ""}>${this._t("automatic")}</option>${options}</select></label>`;
   }
