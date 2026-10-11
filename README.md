@@ -2,6 +2,13 @@
 
 **A standalone Home Assistant Lovelace card for supported Dreame wet & dry vacuum entities.**
 
+![Dreame Wet & Dry wordmark — integration branding only, not a dashboard screenshot](https://raw.githubusercontent.com/matanmesika/dreame-wet-dry-vacuum-home-assistant/main/custom_components/dreame_wet_dry_vacuum/brand/logo.png)
+
+<sub>Dreame brand image from the separate integration repository, shown only
+to identify the product. This is **not a dashboard screenshot**. The actual
+card's design is described in [CURRENT_UI.md](docs/CURRENT_UI.md).
+This standalone card does not bundle the Dreame brand image.</sub>
+
 > **HACS CUSTOM REPOSITORY — PRE-RELEASE.** This is the separate, installable **Dashboard** repository for `dreame-device-card`. It is **not yet listed in the public HACS catalog** and is not a stable H15 release. The card is unofficial and is not affiliated with Dreame. Integration branding belongs to the underlying Dreame integration, not this card.
 
 **Actual UI:** The card displays the Dreame Wet & Dry header, H15 Pro Heat status and battery/connection badges, a round vacuum illustration, **Operation / Device status / Maintenance** tabs, and expandable setting groups. Its colors and panel surfaces inherit your Home Assistant theme. See [the real-card UI specification](docs/CURRENT_UI.md), based on the owner's iPhone screenshot. The screenshot is intentionally not uploaded publicly.
