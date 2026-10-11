@@ -28,4 +28,4 @@
 - [x] Clear stale overrides when changing selected devices
 - [x] Include already-mapped but previously hidden H15 settings in menus
 - [x] Prevent stale asynchronous operations from changing a new device's state
-- [ ] Final hardening CI green on the exact committed changes
+- [x] Final hardening CI green; merged as PR #1 (https://github.com/matanmesika/dreame-device-card/pull/1), verified on main (https://github.com/matanmesika/dreame-device-card/actions/runs/38127466547)
