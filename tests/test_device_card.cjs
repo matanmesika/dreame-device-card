@@ -582,12 +582,10 @@ test('Home Assistant websocket reconnection forces a fresh device registry looku
   c._config = { model: 'H15', entities: {} };
   const first = { n: 0 }, second = { n: 0 };
   c.hass = makeHass('one', first);
-  await Promise.resolve();
-  await Promise.resolve();
+  await new Promise((resolve) => setImmediate(resolve));
   assert.equal(c._device?.id, 'one');
   c.hass = makeHass('two', second);
-  await Promise.resolve();
-  await Promise.resolve();
+  await new Promise((resolve) => setImmediate(resolve));
   assert.ok(first.n >= 2);
   assert.ok(second.n >= 2);
   assert.equal(c._device?.id, 'two');
