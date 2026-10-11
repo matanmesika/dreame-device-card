@@ -546,3 +546,49 @@ test('late registry response cannot overwrite a newer lookup', async () => {
   await older;
   assert.equal(c._device.id, 'first');
 });
+
+
+test('visual editor limits write-capable choices to the selected device', () => {
+  const editor = new (elements.get('dreame-device-card-editor'))();
+  editor.setConfig({ model: 'H15', device_id: 'phone-a' });
+  editor._entries = [
+    { device_id: 'phone-a', platform: 'dreame_wet_dry_vacuum', entity_id: 'select.a_mode' },
+    { device_id: 'phone-b', platform: 'dreame_wet_dry_vacuum', entity_id: 'select.b_mode' },
+    { device_id: 'phone-a', platform: 'different_integration', entity_id: 'select.external' },
+  ];
+  editor._hass = { states: { 'select.a_mode': state('Off'), 'select.b_mode': state('Off'),
+    'select.external': state('Off'), 'sensor.display_helper': state('90') }, language: 'en' };
+  assert.match(editor._picker('mode'), /select.a_mode/);
+  assert.doesNotMatch(editor._picker('mode'), /select.b_mode/);
+  assert.doesNotMatch(editor._picker('mode'), /select.external/);
+  assert.match(editor._picker('battery'), /sensor.display_helper/);
+});
+
+test('Home Assistant websocket reconnection forces a fresh device registry lookup', async () => {
+  const c = card();
+  const entries = [{ device_id: 'one', platform: 'dreame_wet_dry_vacuum',
+    unique_id: 'cloud_online', entity_id: 'binary_sensor.online' }];
+  const makeHass = (deviceId, count) => ({
+    language: 'en',
+    states: { 'binary_sensor.online': state('on') },
+    connection: { subscribeEvents: () => () => {} },
+    callWS: ({ type }) => {
+      count.n++;
+      return Promise.resolve(type.includes('device_registry') ?
+        [{ id: deviceId, model: 'dreame.hold.w2449e', identifiers: [['dreame_wet_dry_vacuum', 'cloud']] }] :
+        entries.map((e) => ({ ...e, device_id: deviceId })));
+    },
+  });
+  c._config = { model: 'H15', entities: {} };
+  const first = { n: 0 }, second = { n: 0 };
+  c.hass = makeHass('one', first);
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(c._device?.id, 'one');
+  c.hass = makeHass('two', second);
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.ok(first.n >= 2);
+  assert.ok(second.n >= 2);
+  assert.equal(c._device?.id, 'two');
+});
