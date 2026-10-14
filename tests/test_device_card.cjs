@@ -450,7 +450,7 @@ test('iPhone viewport uses normal HA page scrolling without clipping settings', 
   assert.match(output, /Operation/);
   assert.match(output, /Device status/);
   assert.match(output, /Maintenance/);
-  assert.match(output, /DREAME · WET & DRY/);
+  assert.match(output, /brand\/logo\.png/);
 });
 
 
