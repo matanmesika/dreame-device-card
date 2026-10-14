@@ -8,24 +8,19 @@
 
 If the shortcut does not open, in Home Assistant go to **HACS → ⋮ → Custom repositories**, paste `https://github.com/matanmesika/dreame-device-card`, select **Dashboard**, and press **Add**. Then locate and download the repository in HACS. This is a custom repository, not necessarily listed in the default HACS catalog.
 
-## Real project visuals
+## Visual gallery and branding
 
-![Dreame Device Card — existing project asset](https://raw.githubusercontent.com/matanmesika/dreame-wet-dry-vacuum-home-assistant/main/custom_components/dreame_wet_dry_vacuum/brand/logo.png)
+![Official Dreame brand logo from companion integration](https://raw.githubusercontent.com/matanmesika/dreame-wet-dry-vacuum-home-assistant/main/custom_components/dreame_wet_dry_vacuum/brand/logo.png)
 
-The image above is the Dreame brand logo already used by the companion integration, not a screenshot. Verified screenshots of the actual card are not yet available for publication.
+This is the **Dreame logo**, not a dashboard screenshot. The actual card renders this logo in its header. The image currently loads from the companion integration's GitHub repository and therefore requires access to that host.
 
-**A standalone Home Assistant Lovelace card for supported Dreame wet & dry vacuum entities.**
+| Card view | What the installed card renders |
+| --- | --- |
+| Operation | Supported cleaning/washing/drying controls, when the integration exposes the required entities |
+| Device status | Battery, connection and operation status from real Home Assistant entities |
+| Maintenance | Filter, brush and water-tank information and confirmed reset actions where supported |
 
-![Dreame Wet & Dry wordmark — integration branding only, not a dashboard screenshot](https://raw.githubusercontent.com/matanmesika/dreame-wet-dry-vacuum-home-assistant/main/custom_components/dreame_wet_dry_vacuum/brand/logo.png)
-
-<sub>Dreame brand image from the separate integration repository, shown only
-to identify the product. This is **not a dashboard screenshot**. The actual
-card's design is described in [CURRENT_UI.md](docs/CURRENT_UI.md).
-This standalone card does not bundle the Dreame brand image.</sub>
-
-> **HACS CUSTOM REPOSITORY — v0.1.0-alpha.1.** This is the separate, installable **Dashboard** repository for `dreame-device-card`. It is **not yet listed in the public HACS catalog** and is not a stable H15 release. The card is unofficial and is not affiliated with Dreame. Integration branding belongs to the underlying Dreame integration, not this card.
-
-**Actual UI:** The card displays the Dreame Wet & Dry header, H15 Pro Heat status and battery/connection badges, a round vacuum illustration, **Operation / Device status / Maintenance** tabs, and expandable setting groups. Its colors and panel surfaces inherit your Home Assistant theme. See [the real-card UI specification](docs/CURRENT_UI.md), based on the owner's iPhone screenshot. The screenshot is intentionally not uploaded publicly.
+**Real UI captures:** Not yet published. The card has not been verified visually on the user's physical H14/H15 installation. [UI specification](docs/CURRENT_UI.md) describes the implemented design but is not a screenshot. Please contribute a privacy-reviewed Home Assistant screenshot of each tab before labelling any image a real dashboard capture.
 
 ## What the dashboard does
 
