@@ -89,7 +89,7 @@ for the same custom element, or you may see duplicate-registration errors.
 ## Quality and release policy
 
 ```sh
-node --check dist/dreame-device-card.js
+node --check dist/dreame-device-card.js\nnode --test tests/test_device_card.cjs
 node --test tests/test_device_card.cjs
 ```
 

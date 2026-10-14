@@ -18,14 +18,14 @@ dreame-device-card/
 │   └── dashboard.yaml               # Example dashboard
 ├── tests/
 │   └── test_device_card.cjs         # Node.js behavior regressions
-├── CHANGELOG.md
+├── docs/CHANGELOG.md
 ├── LICENSE
 ├── README.md
-├── RELEASE_CHECKLIST.md
-├── PRODUCT_TREE.md
-├── info.md
+├── docs/RELEASE_CHECKLIST.md
+├── docs/PRODUCT_TREE.md
+│   ├── info.md
 ├── hacs.json
-├── package.json
+│   ├── package.json
 └── .gitignore
 ```
 

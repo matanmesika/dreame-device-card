@@ -1,0 +1,38 @@
+name: Publish Dreame Device Card initial alpha
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.release/v0.1.0-alpha.1'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify distributable and tests
+        run: |
+          node --check dist/dreame-device-card.js
+          node --test tests/test_device_card.cjs
+          node -e "const fs=require('fs');const m=JSON.parse(fs.readFileSync('hacs.json'));if(m.filename!=='dreame-device-card.js')process.exit(1);if(!fs.statSync('dist/'+m.filename).size)process.exit(1)"
+      - name: Publish first prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view v0.1.0-alpha.1 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo 'Release already exists; refusing overwrite'
+            exit 1
+          fi
+          gh release create v0.1.0-alpha.1 \\
+            --repo "$GITHUB_REPOSITORY" \\
+            --target "$GITHUB_SHA" \\
+            --title "Dreame Device Card v0.1.0-alpha.1" \\
+            --notes-file docs/releases/v0.1.0-alpha.1.md \\
+            --prerelease \\
+            dist/dreame-device-card.js
