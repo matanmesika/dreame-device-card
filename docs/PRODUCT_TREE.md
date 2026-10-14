@@ -23,9 +23,9 @@ dreame-device-card/
 ├── README.md
 ├── docs/RELEASE_CHECKLIST.md
 ├── docs/PRODUCT_TREE.md
-├── info.md
+│   ├── info.md
 ├── hacs.json
-├── package.json
+│   ├── package.json
 └── .gitignore
 ```
 
