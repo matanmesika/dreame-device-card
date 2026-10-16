@@ -38,7 +38,8 @@ const cases=[
          background:getComputedStyle(img).backgroundColor,logoWidth:img.getBoundingClientRect().width,
          dark:root.querySelector('ha-card').getAttribute('data-dark-mode'),
          overflow:document.documentElement.scrollWidth>window.innerWidth+1,calls:window.__calls.length,
-         pageText:root.textContent,hasControls:!!root.querySelector('button[data-command]')};
+         pageText:root.textContent,hasControls:!!root.querySelector('button[data-command]'),iconCount:root.querySelectorAll('ha-icon').length,iconSvgCount:root.querySelectorAll('ha-icon svg').length,
+         leftAligned:root.querySelector('.heading').getBoundingClientRect().left < root.querySelector('.device-badge').getBoundingClientRect().left};
      });
      assert.deepEqual(errors,[],name+' browser errors');
      assert.equal(snap.view,tab,name+' current tab');
@@ -48,6 +49,8 @@ const cases=[
      assert(snap.logoWidth>80&&snap.logoWidth<=120.5,name+' logo sizing');
      assert.equal(snap.overflow,false,name+' horizontal overflow');
      assert.equal(snap.calls,0,name+' unintended device calls');
+     assert(snap.leftAligned,name+' logo/model header is not physically on the left');
+     assert(snap.iconCount>=2 && snap.iconSvgCount>=2,name+' visible icon SVGs missing');
      if(name==='operation')assert(snap.hasControls,'operation should include working UI controls');
      if(group)assert(snap.pageText.length>300,name+' setting group is empty');
      // Screenshot the complete component, not a synthetic reimplementation or outdated reference mockup.
