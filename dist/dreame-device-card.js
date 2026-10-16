@@ -1,5 +1,7 @@
 /* Work-in-progress presentation only. No cloud requests or raw property writes. */
 const DREAME_DOMAIN = "dreame_wet_dry_vacuum";
+// 2023 Dreame wordmark. Its source and attribution are documented in README.md.
+const DREAME_LOGO_URL = "https://upload.wikimedia.org/wikipedia/commons/f/f9/Logo_of_Dreame.svg";
 const registryCache = new WeakMap();
 const BAD_STATES = new Set(["unknown", "unavailable"]);
 const MAINTENANCE_THRESHOLD = 10;
@@ -258,6 +260,11 @@ class DreameDeviceCard extends HTMLElement {
     this._discoverySerial = 0;
     this._scrollPositions = new Map();
     this._scrolling = false;
+    this.shadowRoot.addEventListener("error", (event) => {
+      if (event.target?.classList?.contains("dreame-wordmark")) {
+        event.target.parentElement?.classList.add("logo-failed");
+      }
+    }, true);
     this.shadowRoot.addEventListener("click", (event) => this._click(event));
     this.shadowRoot.addEventListener("change", (event) => this._change(event));
     this.shadowRoot.addEventListener("focusout", () => queueMicrotask(() => this._render()));
@@ -604,7 +611,7 @@ class DreameDeviceCard extends HTMLElement {
     const progressLabel = progress === undefined ? "" : `<div class="progress-label" role="progressbar" aria-label="${escapeHTML(this._t(this._activityTone() === "cleaning" ? "clean_progress" : "dry_progress"))}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress}">${progress}%</div>`;
     const confirm = this._confirm ? `<div class="confirmation" role="alertdialog" aria-label="${this._t(this._confirm)}"><p>${this._t("reset_confirm")}</p><div class="actions"><button data-cancel>${this._t("cancel")}</button><button data-confirm class="danger">${this._t("confirm")}</button></div></div>` : "";
     const html = `<style>${DREAME_STYLES}</style><ha-card dir="${this._direction}" data-device-state="${this._activityTone()}" data-battery="${this._batteryTone()}">
-      <header><div class="heading"><div class="dreame-brand"><img src="https://raw.githubusercontent.com/matanmesika/dreame-wet-dry-vacuum-home-assistant/main/custom_components/dreame_wet_dry_vacuum/brand/logo.png" alt="Dreame" loading="lazy" referrerpolicy="no-referrer"></div><h2>${escapeHTML(title)}</h2><div class="activity">${escapeHTML(this._value("work"))}</div>${this._roles.vacuum ? `<button class="native-link" data-native>${this._t("native")}</button>` : ""}</div><div class="device-badge"><div class="hero">${ring}${image}</div>${progressLabel}</div></header>
+      <header><div class="heading"><div class="dreame-brand" dir="ltr"><img class="dreame-wordmark" src="${DREAME_LOGO_URL}" alt="Dreame" width="120" height="18" loading="eager" decoding="async"><span class="dreame-brand-fallback">DREAME · WET &amp; DRY</span></div><h2>${escapeHTML(title)}</h2><div class="activity">${escapeHTML(this._value("work"))}</div>${this._roles.vacuum ? `<button class="native-link" data-native>${this._t("native")}</button>` : ""}</div><div class="device-badge"><div class="hero">${ring}${image}</div>${progressLabel}</div></header>
       <div class="summary">${this._metric("battery", "mdi:battery")}${this._metric("online", "mdi:wifi")}</div>
       ${this._faultNotice()}
       ${this._maintenanceNotice()}
@@ -711,7 +718,7 @@ class DreameDeviceCard extends HTMLElement {
 const DREAME_STYLES = `
   :host{display:block;font-family:var(--paper-font-body1_-_font-family,system-ui);color:var(--primary-text-color)}
   ha-card{display:block;overflow:hidden;border-radius:var(--ha-card-border-radius,24px);background:var(--ha-card-background,var(--card-background-color));border:1px solid var(--divider-color);padding:22px;box-sizing:border-box}
-  header{text-align:center}.dreame-brand{display:flex;justify-content:center;align-items:center;min-height:42px}.dreame-brand img{display:block;max-width:170px;max-height:42px;width:auto;height:auto;object-fit:contain}h2{font-size:23px;margin:8px 0}h3{font-size:16px;margin:22px 0 12px}.activity{font-size:19px;color:var(--primary-color);min-height:24px}
+  header{text-align:center}.dreame-brand{display:flex;justify-content:flex-start;align-items:center;direction:ltr;text-align:left;min-height:20px;max-height:22px}.dreame-brand img{display:block;width:120px;height:18px;max-width:100%;object-fit:contain;background:#fff;padding:1px 3px;border-radius:3px;box-sizing:content-box}.dreame-brand-fallback{display:none;font-size:14px;font-weight:700;letter-spacing:.06em;line-height:20px;white-space:nowrap}.dreame-brand.logo-failed img{display:none}.dreame-brand.logo-failed .dreame-brand-fallback{display:inline}h2{font-size:23px;margin:8px 0}h3{font-size:16px;margin:22px 0 12px}.activity{font-size:19px;color:var(--primary-color);min-height:24px}
   .summary,.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}.metric{display:grid;grid-template-columns:24px 1fr;gap:6px 10px;align-items:center;padding:12px;border-radius:16px;background:var(--secondary-background-color);min-width:0}.metric ha-icon{grid-row:span 2;color:var(--primary-color)}.metric span{font-size:11px;color:var(--secondary-text-color)}.metric strong{font-size:15px;overflow-wrap:anywhere}
   .hero{height:215px;display:flex;justify-content:center;margin:4px auto 12px}.hero svg{height:100%;max-width:100%}.hero img{height:100%;max-width:100%;object-fit:contain}
   nav{display:flex;background:var(--secondary-background-color);padding:4px;border-radius:14px;gap:4px}nav button{flex:1;font-size:12px;min-width:0;padding:12px 5px;border:0;border-radius:10px;background:transparent}nav button[aria-selected=true]{background:var(--ha-card-background,var(--card-background-color));color:var(--primary-color);box-shadow:var(--ha-card-box-shadow,none)}
@@ -722,7 +729,7 @@ const DREAME_STYLES = `
   /* Compact native-card presentation; HA theme owns the colors and surface. */
   ha-card{padding:16px;border-radius:var(--ha-card-border-radius,18px)}
   header{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:start;min-height:82px}
-  .heading{flex:1;min-width:0}.eyebrow{font-size:9px;letter-spacing:.14em}h2{font-size:19px;margin:6px 0;overflow-wrap:anywhere}.activity{font-size:14px;min-height:18px}
+  .heading{flex:1;min-width:0;direction:ltr;text-align:left}.eyebrow{font-size:9px;letter-spacing:.14em}h2{font-size:19px;margin:6px 0;overflow-wrap:anywhere}.activity{font-size:14px;min-height:18px}
   .hero{height:82px;flex:0 0 62px;margin:0}.hero svg,.hero img{width:100%;height:100%;object-fit:contain}
   .summary{display:flex;flex-wrap:wrap;gap:16px;margin:8px 0 14px}.summary .metric{display:flex;gap:6px;padding:0;background:transparent;border-radius:0}.summary .metric span{font-size:11px}.summary .metric strong{font-size:12px;font-weight:500}.summary ha-icon{--mdc-icon-size:16px}
   nav{border-radius:10px;padding:3px;gap:2px}nav button{font-size:11px;border-radius:8px;padding:8px 4px;min-height:40px}nav button[aria-selected=true]{box-shadow:none}
