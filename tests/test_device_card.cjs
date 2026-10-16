@@ -461,6 +461,7 @@ test('iPhone viewport uses normal HA page scrolling without clipping settings', 
   assert.match(output, /dreame-brand-fallback/);
   assert.match(output, /\.dreame-brand\{display:flex;justify-content:flex-start/);
   assert.match(output, /\.heading\{flex:1;min-width:0;direction:ltr;text-align:left\}/);
+  assert.match(output, /header\{display:flex;direction:ltr;align-items:center/);
   assert.doesNotMatch(output, /brand\/logo\.png/);
 });
 
