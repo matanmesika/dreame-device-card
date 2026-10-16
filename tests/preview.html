@@ -21,6 +21,7 @@ const roles=model==='H14'?H14_ROLES:ROLES;
 const presets={battery:'86',work:'Sleeping',online:'on',charging:'off',clean_progress:'0',dry_progress:'0',clean_count:'27',runtime:'15',filter:'73',brush:'64',custom:'on',mode:'Personalized',suction:'Gentle',water:'Standard',hot_water:'Off',wash_mode:'Standard',dry_mode:'Quiet',volume:'1',schedule_time:'600',dirty_tank_status:'normal',warnings:'0',errors:'0',traction:'Auto',language:'English',arm:'Smart'};
 const states={},entries=[];
 for(const [role,[domain,suffix]] of Object.entries(roles)){
+ if(role==="vacuum")continue; // The wet/dry stick integration does not expose a vacuum entity.
  const entity_id=domain+'.demo_'+role,options=role==='mode'?['Personalized','Smart','Quiet']:role==='hot_water'?['Off','On']:['Off','Auto','Standard','Quiet','High','Low','Smart','Personalized','English','Hebrew'];
  const value=presets[role] ?? (domain==='binary_sensor'?'off':domain==='switch'?'on':domain==='select'?'Auto':domain==='button'?'unknown':domain==='number'?'1':'0');
  const attributes={friendly_name:role,...(domain==='select'?{options}:{}),...(domain==='number'?{min:0,max:role==='schedule_time'?1439:role==='volume'?2:10,step:1}:{}),...(['battery','filter','brush','clean_progress','dry_progress'].includes(role)?{unit_of_measurement:'%'}:{}),...(['warnings','errors'].includes(role)?{raw_value:0}:{}),...(role==='work'&&model==='H15'?{raw_value:0}:{}),...(role==='mode'?{raw_value:4}:{}),...(role==='hot_water'?{raw_value:0}:{})};
