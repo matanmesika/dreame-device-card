@@ -2,7 +2,7 @@
 
 # Dreame Wet & Dry Dashboard
 
-Home Assistant dashboard for Dreame Wet & Dry vacuum devices. See all screens from the **latest released dashboard** before installing the HACS card.
+Home Assistant dashboard for Dreame Wet & Dry vacuum devices. Preview every screen from the **current dashboard implementation** before installing the HACS card.
 
 ## Dashboard screenshots
 
