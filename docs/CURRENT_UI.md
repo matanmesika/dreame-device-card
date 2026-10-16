@@ -16,7 +16,7 @@ device state, dashboard navigation and account environment.
 
 ```text
 ┌────────────────────────────────────────────┐
-│ DREAME · WET & DRY         [vacuum drawing] │
+│ DREAME (small logo)        [vacuum drawing] │
 │ H15 Pro Heat                               │
 │ Sleeping                  Native device    │
 │                           dialog           │
@@ -33,6 +33,8 @@ device state, dashboard navigation and account environment.
 │ Mapping in progress · some controls ...    │
 └────────────────────────────────────────────┘
 ```
+
+The wordmark is **120 × 18 px**, left-aligned directly above the model title (19 px) in both English and Hebrew. It must not occupy an oversized centered header. If the external logo fails to load, the original `DREAME · WET & DRY` text appears. Neither the device illustration nor the model text changes.
 
 This is a **structural diagram**, not a screenshot or substitute image.
 Actual values, badges and controls are supplied by Home Assistant and
