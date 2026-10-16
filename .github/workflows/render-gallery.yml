@@ -1,0 +1,37 @@
+name: Browser render, device-safety QA and dashboard gallery
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout dashboard version under test
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install screenshot test runner and real Material Design icons
+        run: npm install --no-save --no-package-lock playwright @mdi/js
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Validate release JavaScript syntax and existing unit tests
+        run: |
+          node --check dist/dreame-device-card.js
+          node --test tests/test_device_card.cjs
+      - name: Render newest card from dist and check safety across 12 screens
+        run: node tests/render_demo_gallery.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dreame-current-dashboard-screenshots
+          path: docs/screenshots/
+          if-no-files-found: ignore

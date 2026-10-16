@@ -453,12 +453,24 @@ test('iPhone viewport uses normal HA page scrolling without clipping settings', 
   assert.match(output, /src="https:\/\/upload\.wikimedia\.org\/wikipedia\/commons\/f\/f9\/Logo_of_Dreame\.svg"/);
   assert.match(output, /class="dreame-wordmark"/);
   assert.match(output, /width="120" height="18"/);
+  assert.match(output, /data-dark-mode="false"/);
+  assert.match(output, /\.dreame-brand img\{[^}]*background:transparent;padding:0;border-radius:0/);
+  assert.match(output, /ha-card\[data-dark-mode=true\] \.dreame-brand img\{filter:invert\(1\) hue-rotate\(180deg\)/);
+  assert.match(output, /DREAME · WET &amp; DRY/);
+  assert.doesNotMatch(output, /background:#fff;padding:1px 3px/);
   assert.match(output, /dreame-brand-fallback/);
   assert.match(output, /\.dreame-brand\{display:flex;justify-content:flex-start/);
   assert.match(output, /\.heading\{flex:1;min-width:0;direction:ltr;text-align:left\}/);
+  assert.match(output, /header\{display:flex;direction:ltr;align-items:center/);
   assert.doesNotMatch(output, /brand\/logo\.png/);
 });
 
+
+test('renderer only uses device-image fallback for the device illustration', () => {
+  const source = fs.readFileSync(path.join(__dirname, '../dist/dreame-device-card.js'), 'utf8');
+  assert.match(source, /querySelector\("\.hero img"\)\?\.addEventListener\("error"/);
+  assert.doesNotMatch(source, /querySelector\("img"\)\?\.addEventListener\("error"/);
+});
 
 test('unavailable external Dreame logo falls back to original brand text', () => {
   const widget = card();
