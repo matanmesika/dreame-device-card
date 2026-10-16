@@ -455,7 +455,7 @@ test('iPhone viewport uses normal HA page scrolling without clipping settings', 
   assert.match(output, /width="120" height="18"/);
   assert.match(output, /data-dark-mode="false"/);
   assert.match(output, /\.dreame-brand img\{[^}]*background:transparent;padding:0;border-radius:0/);
-  assert.match(output, /ha-card\[data-dark-mode=true\] \.dreame-brand img\{filter:drop-shadow/);
+  assert.match(output, /ha-card\[data-dark-mode=true\] \.dreame-brand img\{filter:invert\(1\) hue-rotate\(180deg\)/);
   assert.match(output, /DREAME · WET &amp; DRY/);
   assert.doesNotMatch(output, /background:#fff;padding:1px 3px/);
   assert.match(output, /dreame-brand-fallback/);
