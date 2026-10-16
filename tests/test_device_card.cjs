@@ -7,7 +7,7 @@ const elements = new Map();
 const context = vm.createContext({
   HTMLElement: class {
     attachShadow() {
-      this.shadowRoot = { addEventListener() {}, querySelector() { return null; }, innerHTML: '' };
+      this.shadowRoot = { addEventListener(type, callback) { (this._handlers ||= {})[type] = callback; }, querySelector() { return null; }, innerHTML: '' };
     }
     dispatchEvent(event) { (this.events ||= []).push(event); return true; }
   },
@@ -459,6 +459,20 @@ test('iPhone viewport uses normal HA page scrolling without clipping settings', 
   assert.doesNotMatch(output, /brand\/logo\.png/);
 });
 
+
+test('unavailable external Dreame logo falls back to original brand text', () => {
+  const widget = card();
+  const added = [];
+  const img = {
+    classList: { contains: (name) => name === 'dreame-wordmark' },
+    parentElement: { classList: { add: (name) => added.push(name) } },
+  };
+  widget.shadowRoot._handlers.error({ target: img });
+  assert.deepEqual(added, ['logo-failed']);
+  widget._render();
+  assert.match(widget.shadowRoot.innerHTML, /\.dreame-brand\.logo-failed \.dreame-brand-fallback\{display:inline\}/);
+  assert.match(widget.shadowRoot.innerHTML, /DREAME · WET &amp; DRY/);
+});
 
 test('manual write overrides cannot target a different Dreame device', () => {
   const a = { id: 'dreame-a', identifiers: [['dreame_wet_dry_vacuum', 'cloud-a']] };
