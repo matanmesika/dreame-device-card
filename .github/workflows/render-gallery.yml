@@ -2,25 +2,20 @@ name: Browser render, device-safety QA and dashboard gallery
 on:
   push:
     branches:
-      - release/transparent-logo-and-ui-gallery
-    paths-ignore:
-      - 'docs/screenshots/**'
+      - main
   pull_request:
     branches:
       - main
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
   screenshots:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - name: Checkout the proposed dashboard update
+      - name: Checkout dashboard version under test
         uses: actions/checkout@v4
-        with:
-          ref: release/transparent-logo-and-ui-gallery
-          persist-credentials: true
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -34,18 +29,6 @@ jobs:
           node --test tests/test_device_card.cjs
       - name: Render newest card from dist and check safety across 12 screens
         run: node tests/render_demo_gallery.cjs
-      - name: Commit approved synthetic-data screenshots on the feature branch
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/screenshots/
-          if ! git diff --cached --quiet; then
-            git commit -m 'docs(gallery): capture latest Dreame dashboard browser rendering'
-            # Other PR commits may land while Chromium renders; replay only the gallery commit.
-            git fetch origin release/transparent-logo-and-ui-gallery
-            git rebase origin/release/transparent-logo-and-ui-gallery
-            git push origin HEAD:release/transparent-logo-and-ui-gallery
-          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
