@@ -41,6 +41,9 @@ jobs:
           git add docs/screenshots/
           if ! git diff --cached --quiet; then
             git commit -m 'docs(gallery): capture latest Dreame dashboard browser rendering'
+            # Other PR commits may land while Chromium renders; replay only the gallery commit.
+            git fetch origin release/transparent-logo-and-ui-gallery
+            git rebase origin/release/transparent-logo-and-ui-gallery
             git push origin HEAD:release/transparent-logo-and-ui-gallery
           fi
       - uses: actions/upload-artifact@v4
