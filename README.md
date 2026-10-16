@@ -14,7 +14,7 @@ If the shortcut does not open, in Home Assistant go to **HACS → ⋮ → Custom
 
 The **current Dreame wordmark**, introduced at IFA 2023, consists of uppercase black letters with a gold smile curve crossing the A. This is a logo illustration, **not a dashboard screenshot**.
 
-The installed dashboard displays the official SVG **without a white background**, as a compact 120 × 18 px wordmark, left-aligned directly above the model name (19 px heading). A light outline supports contrast in dark themes. If the image fails to load, the original `DREAME · WET & DRY` caption is displayed. The former large centered logo has been removed.
+The installed dashboard displays the official SVG **without a white background**, as a compact 120 × 18 px wordmark, left-aligned directly above the model name (19 px heading). A transparent dark-theme filter makes the lettering readable without adding an opaque rectangle. If the image fails to load, the original `DREAME · WET & DRY` caption is displayed. The former large centered logo has been removed.
 
 Source: [Dreame's 2023 brand announcement](https://www.prnewswire.com/news-releases/dreame-unveils-upgraded-brand-identity-at-ifa-2023-reflective-of-enriched-customer-experience-301911151.html). The SVG is served by [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Logo_of_Dreame.svg), which credits Dreame Technology as author and lists [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Dreame's trademarks remain with their owner; this unofficial project is not affiliated with Dreame. The SVG is linked, not copied into this repository; the image needs access to Wikimedia Commons.
 
