@@ -10,9 +10,13 @@ If the shortcut does not open, in Home Assistant go to **HACS → ⋮ → Custom
 
 ## Visual gallery and branding
 
-![Official Dreame brand logo from companion integration](https://raw.githubusercontent.com/matanmesika/dreame-wet-dry-vacuum-home-assistant/main/custom_components/dreame_wet_dry_vacuum/brand/logo.png)
+<img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Logo_of_Dreame.svg" alt="Dreame 2023 wordmark" width="280">
 
-This is the **Dreame logo**, not a dashboard screenshot. The actual card renders this logo in its header. The image currently loads from the companion integration's GitHub repository and therefore requires access to that host.
+The **current Dreame wordmark**, introduced at IFA 2023, consists of uppercase black letters with a gold smile curve crossing the A. This is a logo illustration, **not a dashboard screenshot**.
+
+The installed dashboard displays this image **only as a compact 120 × 18 px wordmark, left-aligned directly above the model name** (19 px heading). If the image fails to load, the original `DREAME · WET & DRY` caption is displayed. The former large centered logo has been removed.
+
+Source: [Dreame's 2023 brand announcement](https://www.prnewswire.com/news-releases/dreame-unveils-upgraded-brand-identity-at-ifa-2023-reflective-of-enriched-customer-experience-301911151.html). The SVG is served by [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Logo_of_Dreame.svg), which credits Dreame Technology as author and lists [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Dreame's trademarks remain with their owner; this unofficial project is not affiliated with Dreame. The SVG is linked, not copied into this repository; the image needs access to Wikimedia Commons.
 
 | Card view | What the installed card renders |
 | --- | --- |
@@ -106,7 +110,7 @@ node --test tests/test_device_card.cjs
 - GitHub Actions test both the JavaScript syntax and the card behavior. HACS repository acceptance is checked separately from physical H15 device validation.
 - Review model selection, English/Hebrew layouts, the three tabs, iOS scroll handling, service command safety, and the maintenance reset dialog on a running Home Assistant.
 - The original schematic SVG images have been removed because they did not match the actual interface. See [docs/CURRENT_UI.md](docs/CURRENT_UI.md) for a faithful layout and explicit separation of the outer dashboard and card. Add a real, redacted screenshot only with explicit publication permission.
-- **Integration branding is not part of this card:** the logo/icon belongs in the installed integration at `custom_components/dreame_wet_dry_vacuum/brand/icon.png` (with `icon@2x.png` for high-density displays). The dashboard release package deliberately omits these brand assets.
+- **Integration branding is not part of this card:** the logo/icon belongs in the installed integration at `custom_components/dreame_wet_dry_vacuum/brand/icon.png` (with `icon@2x.png` for high-density displays). The dashboard release package deliberately omits these brand assets. The small header wordmark is linked separately and does not modify the integration's branding files.
 
 ## Privacy, support and contribution
 
@@ -118,6 +122,6 @@ The card runs within Home Assistant and uses the supplied `hass` state and servi
 
 זהו כרטיס דשבורד ל־Home Assistant המיועד למכשירי Dreame Wet & Dry נתמכים, עם **שלוש לשוניות: תפעול, מצב המכשיר ותחזוקה**. הכרטיס משתמש בישויות האמיתיות של האינטגרציה; הוא אינו ממציא חיישנים ואינו משנה את מיפויי המכשיר. ניתן לבחור `language: he`, ואת דגם H14 או H15 בעורך.
 
-האייקון והלוגו שייכים לאינטגרציה עצמה, תחת `custom_components/dreame_wet_dry_vacuum/brand/`. חבילת הדשבורד אינה מכילה לוגו נפרד.
+קובצי המיתוג של האינטגרציה נשארים תחת `custom_components/dreame_wet_dry_vacuum/brand/`. הדשבורד מציג את לוגו Dreame המעודכן בגובה 18 פיקסלים, מיושר לשמאל מעל שם הדגם, עם חזרה אוטומטית לכיתוב `DREAME · WET & DRY` במקרה שהתמונה אינה נטענת. קובצי המיתוג של האינטגרציה אינם משתנים.
 
 **חשוב:** המיפוי של H15 עדיין ניסיוני וחלקו דורש אימות מול מכשיר אמיתי. הסרנו את תמונות ההמחשה שלא התאימו לממשק האמיתי. תיאור הפריסה המעודכן נמצא בקובץ `docs/CURRENT_UI.md`; צילום המסך האישי לא פורסם ב־GitHub. אפשר להתקין את הכרטיס דרך HACS באמצעות הוספת המאגר הזה כ־Custom Repository מסוג Dashboard. הכרטיס עדיין בשלב בדיקות וללא גרסת Release יציבה.
