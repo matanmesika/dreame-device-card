@@ -5,6 +5,9 @@ on:
       - release/transparent-logo-and-ui-gallery
     paths-ignore:
       - 'docs/screenshots/**'
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 permissions:
   contents: write
