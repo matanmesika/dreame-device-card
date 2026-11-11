@@ -622,3 +622,22 @@ test('Home Assistant websocket reconnection forces a fresh device registry looku
   assert.ok(second.n >= 2);
   assert.equal(c._device?.id, 'two');
 });
+
+test('state updates during the registry lookup do not leave the card stuck loading', async () => {
+  const c = card();
+  const connection = {};
+  const pending = [];
+  const devices = [{ id: 'first', model: 'dreame.hold.w2449e', identifiers: [['dreame_wet_dry_vacuum', 'id-one']] }];
+  const entries = [{ device_id: 'first', platform: 'dreame_wet_dry_vacuum', unique_id: 'id-one_online', entity_id: 'binary_sensor.online' }];
+  c._config = { model: 'H15', entities: {} };
+  c._hass = { ...c._hass, connection, callWS: ({ type }) => type.includes('device_registry')
+    ? new Promise((resolve) => pending.push(resolve)) : Promise.resolve(entries) };
+  const lookup = c._discover(true);
+  // Home Assistant replaces the hass object on every state change; same connection.
+  c._hass = { ...c._hass, states: { ...c._hass.states } };
+  pending[0](devices);
+  await lookup;
+  assert.equal(c._resolving, false);
+  assert.equal(c._resolved, true);
+  assert.equal(c._device.id, 'first');
+});
