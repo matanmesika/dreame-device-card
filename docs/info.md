@@ -2,4 +2,4 @@
 
 A theme-aware Home Assistant Lovelace card for supported Dreame wet & dry vacuums. Three tabs cover **Operation**, **Device status**, and **Maintenance**, using real Home Assistant entities only. English and Hebrew UI are available.
 
-**Available as a HACS Custom Dashboard repository (pre-release).** H15 Pro Heat mappings remain experimental; several commands and device alerts need physical verification. See the [README](../README.md) for installation, [current H15 card UI](CURRENT_UI.md), safeguards, and known limitations.
+**Available as a HACS Custom Dashboard repository (stable v1.0.0).** H15 Pro Heat mappings remain experimental; several commands and device alerts need physical verification. See the [README](../README.md) for installation, [current H15 card UI](CURRENT_UI.md), safeguards, and known limitations.
