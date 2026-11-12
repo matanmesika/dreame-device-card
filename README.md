@@ -1,4 +1,4 @@
-<img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Logo_of_Dreame.svg" alt="Dreame official corporate wordmark" width="320">
+<img src="https://raw.githubusercontent.com/matanmesika/dreame-device-card/main/docs/brand/dreame-logo.svg" alt="Dreame official logo" width="360">
 
 # Dreame Wet & Dry Dashboard
 
