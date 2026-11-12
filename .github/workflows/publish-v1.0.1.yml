@@ -1,0 +1,37 @@
+name: Publish v1.0.1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.release/v1.0.1'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify release content
+        run: |
+          node --check dist/dreame-device-card.js
+          node --test tests/test_device_card.cjs tests/test_readme_gallery.cjs
+          python -m json.tool hacs.json >/dev/null
+          test -s dist/dreame-device-card.js
+          test -s docs/brand/dreame-logo.svg
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view v1.0.1 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo 'Release already exists; refusing overwrite'
+            exit 1
+          fi
+          gh release create v1.0.1 --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Dreame Wet & Dry Dashboard v1.0.1" --notes-file docs/releases/v1.0.1.md --latest dist/dreame-device-card.js
