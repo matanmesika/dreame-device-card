@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.1 — 2026-11-12
+
+- HACS page: the official Dreame logo is now stored in the repository (`docs/brand/dreame-logo.svg`) on a light tile, so it stays readable in both light and dark Home Assistant themes. No card code changes.
+
 ## v1.0.0 — 2026-11-12
 
 - First stable release. Same tested card as v0.1.0-alpha.3, now published as a stable (non-prerelease) GitHub release so HACS tracks it by default.
