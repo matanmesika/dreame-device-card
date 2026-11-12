@@ -1,6 +1,6 @@
 {
   "name": "dreame-device-card",
-  "version": "0.1.0-alpha.3",
+  "version": "1.0.0",
   "private": true,
   "description": "Standalone Home Assistant Dreame Wet & Dry dashboard card",
   "scripts": {
