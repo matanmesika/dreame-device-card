@@ -384,7 +384,7 @@ class DreameDeviceCard extends HTMLElement {
     const generation = this._generation;
     const request = ++this._discoverySerial;
     const hass = this._hass;
-    const isCurrent = () => generation === this._generation && request === this._discoverySerial && hass === this._hass;
+    const isCurrent = () => generation === this._generation && request === this._discoverySerial && (hass.connection || hass) === (this._hass?.connection || this._hass);
     const cacheKey = hass.connection || hass;
     try {
       if (retry) registryCache.delete(cacheKey);
