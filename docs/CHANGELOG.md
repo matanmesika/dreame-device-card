@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.0-alpha.3 — 2026-11-12
+
+- Fix the card staying on "Loading device…" while Home Assistant state updates arrive during device discovery (#10).
+- Compact official Dreame wordmark with text fallback (#7), transparent logo and verified UI gallery (#8), README gallery refresh (#9).
+
 ## Unreleased — HACS Custom Dashboard initial repository
 
 - Package existing Dreame device Lovelace card as a standalone HACS Dashboard candidate.
