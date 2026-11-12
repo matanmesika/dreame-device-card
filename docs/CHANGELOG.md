@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.0 — 2026-11-12
+
+- First stable release. Same tested card as v0.1.0-alpha.3, now published as a stable (non-prerelease) GitHub release so HACS tracks it by default.
+
 ## v0.1.0-alpha.3 — 2026-11-12
 
 - Fix the card staying on "Loading device…" while Home Assistant state updates arrive during device discovery (#10).
