@@ -92,10 +92,10 @@ test('offline and unavailable entities cannot write or reset', async () => {
   await c._act('mode', 'Turbo');
   assert.equal(c.calls.length, 0);
 });
-test('volume uses only native 0/1/2; raw values and unknown select options are rejected', () => {
+test('H15 volume uses the app levels 0/30/60; raw values and unknown select options are rejected', () => {
   const service = get('serviceFor');
-  assert.equal(service('volume', state('1', { min: 0, max: 2, step: 1 }), 2)[2].value, 2);
-  for (const value of [30, 60, 1.5, NaN]) assert.throws(() => service('volume', state('1', { min: 0, max: 2, step: 1 }), value));
+  assert.equal(service('volume', state('30', { min: 0, max: 60, step: 30 }), 60)[2].value, 60);
+  for (const value of [1, 2, 45, 1.5, NaN]) assert.throws(() => service('volume', state('30', { min: 0, max: 60, step: 30 }), value));
   assert.throws(() => service('mode', state('Quiet', { options: ['Quiet'] }), 'Power off'));
 });
 test('maintenance reset requires explicit confirmation and leaves telemetry untouched', async () => {
@@ -284,7 +284,7 @@ test('each tab and settings page restores its own scroll position', () => {
   c._tab = 'maintenance'; c._render();
   assert.equal(dom.panel().scrollTop, 0);
   dom.panel().scrollTop = 130;
-  c._tab = 'operation'; c._render();
+  c._tab = 'mop'; c._render();
   assert.equal(dom.panel().scrollTop, 30);
   c._tab = 'maintenance'; c._render();
   assert.equal(dom.panel().scrollTop, 130);
@@ -295,7 +295,7 @@ test('English and Hebrew navigation arrows and sliders follow the card direction
   assert.equal(c._navIcon(), 'mdi:chevron-right');
   assert.equal(c._navIcon(true), 'mdi:arrow-left');
   assert.match(c._control('volume'), /dir="ltr"/);
-  c._settings = 'cleaning_settings';
+  c._settings = 'customize';
   assert.match(c._panel(), /mdi:arrow-left/);
   c._config.language = 'he';
   assert.equal(c._navIcon(), 'mdi:chevron-left');
@@ -447,8 +447,9 @@ test('iPhone viewport uses normal HA page scrolling without clipping settings', 
   const output = widget.shadowRoot.innerHTML;
   assert.match(output, /@media\(max-width:600px\)\{\.panel\{max-height:none;overflow:visible;overscroll-behavior:auto\}\}/);
   assert.match(output, /role="tablist"/);
-  assert.match(output, /Operation/);
-  assert.match(output, /Device status/);
+  assert.match(output, /Mopping Mode/);
+  assert.match(output, /Washing and Drying Settings/);
+  assert.match(output, /Device Settings/);
   assert.match(output, /Maintenance/);
   assert.match(output, /src="https:\/\/upload\.wikimedia\.org\/wikipedia\/commons\/f\/f9\/Logo_of_Dreame\.svg"/);
   assert.match(output, /class="dreame-wordmark"/);
@@ -520,18 +521,12 @@ test('changing H15 devices clears old manual controls and keeps title', () => {
 
 test('existing H15 settings are visible only when their real entities exist', () => {
   const c = card();
-  const additional = {
-    temperature: 'select.temperature', return_wash: 'select.return_wash',
-    return_dry: 'select.return_dry', arm: 'select.arm',
-    scheduled_wash: 'select.scheduled_wash', scheduled_dry: 'select.scheduled_dry',
-  };
+  const additional = { temperature: 'select.temperature', arm: 'select.arm' };
   Object.assign(c._roles, additional);
   for (const id of Object.values(additional)) c._hass.states[id] = state('Off', { options: ['Off', 'On'] });
-  for (const [group, roles] of Object.entries({
-    cleaning_settings: ['temperature'], wash_settings: ['return_wash', 'return_dry'],
-    device_settings: ['arm'], advanced: ['scheduled_wash', 'scheduled_dry'],
-  })) {
-    c._settings = group;
+  // Same placement as the Dreamehome app: hot water mode on Mopping Mode, arm on Device Settings.
+  for (const [tab, roles] of Object.entries({ mop: ['temperature'], devset: ['arm'] })) {
+    c._tab = tab; c._settings = undefined;
     for (const role of roles) assert.match(c._panel(), new RegExp('data-setting="' + role + '"'));
   }
   assert.equal(c.calls.length, 0);
@@ -640,4 +635,16 @@ test('state updates during the registry lookup do not leave the card stuck loadi
   assert.equal(c._resolving, false);
   assert.equal(c._resolved, true);
   assert.equal(c._device.id, 'first');
+});
+
+test('H15 schedule start time is sent in seconds after midnight, like the app', () => {
+  const c = card();
+  c._roles.schedule_time = 'number.schedule_time';
+  c._roleMap = { ...c._roleMap, schedule_time: ['number', 'h15_setting_1_76'] };
+  c._hass.states['number.schedule_time'] = state('28800', { min: 0, max: 86340, step: 60 });
+  assert.match(c._control('schedule_time'), /value="08:00"/);
+  let sent;
+  c._act = (role, value) => { sent = [role, value]; };
+  c._change({ target: { dataset: { role: 'schedule_time' }, type: 'time', value: '07:30', blur() {} } });
+  assert.deepEqual(sent, ['schedule_time', 27000]);
 });

@@ -7,9 +7,9 @@ const root = path.resolve(__dirname, '..');
 const readme = fs.readFileSync(path.join(root, 'README.md'), 'utf8');
 const hacs = JSON.parse(fs.readFileSync(path.join(root, 'hacs.json'), 'utf8'));
 const names = [
-  'operation', 'status', 'maintenance', 'cleaning-settings', 'wash-dry-settings',
-  'device-settings', 'advanced-settings', 'operation-he', 'status-he',
-  'maintenance-he', 'operation-light', 'operation-h14',
+  'mopping-mode', 'customize-settings', 'washing-drying-settings', 'wash-dry-mode', 'advanced-settings',
+  'device-settings', 'voice-settings', 'maintenance', 'cleaning-record', 'mopping-mode-he',
+  'washing-drying-settings-he', 'maintenance-he', 'mopping-mode-light', 'mopping-mode-h14',
 ];
 const screenshotsUrl = 'https://raw.githubusercontent.com/matanmesika/dreame-device-card/main/docs/screenshots/';
 
@@ -22,7 +22,7 @@ test('Dreame company logo is first and gallery appears before installation instr
   assert(readme.indexOf('## Dashboard screenshots') < readme.indexOf('## Install manually through HACS'));
 });
 
-test('all twelve gallery images are present, referenced, and valid PNG files', () => {
+test('all gallery images are present, referenced, and valid PNG files', () => {
   for (const name of names) {
     const filename = name + '.png';
     const p = path.join(root, 'docs', 'screenshots', filename);

@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.1.0 — 2026-11-13
+
+- H15 tabs, order and names now match the Dreamehome app (Mopping Mode · Washing and Drying Settings · Device Settings · Maintenance), with the app's Hebrew strings.
+- Cleaning Record page and Firmware Upgrade row.
+- Fix: schedule Start Time in seconds; voice volume levels 0/30/60.
+- Gallery re-rendered for the new layout.
+
 ## v1.0.1 — 2026-11-12
 
 - HACS page: the official Dreame logo is now stored in the repository (`docs/brand/dreame-logo.svg`) on a light tile, so it stays readable in both light and dark Home Assistant themes. No card code changes.
