@@ -41,6 +41,9 @@ const ROLES = {
   stop_clean: ["button", "h15_command_stop_self_clean"], start_dry: ["button", "h15_command_start_self_dry"],
   stop_dry: ["button", "h15_command_stop_self_dry"], reset_filter: ["button", "h15_command_reset_filter"],
   reset_brush: ["button", "h15_command_reset_front_brush"],
+  clean_today: ["sensor", "h15_clean_time_today"], clean_week: ["sensor", "h15_clean_time_week"],
+  clean_sessions: ["sensor", "h15_clean_sessions_week"], last_clean: ["sensor", "h15_last_session"],
+  firmware: ["update", "h15_firmware"],
 };
 const TEXT = {
   he: {
@@ -50,7 +53,7 @@ const TEXT = {
     hot_water: "חימום מים", wash_mode: "מצב ניקוי עצמי", dry_mode: "מצב ייבוש", volume: "עוצמת קול",
     silent: "שקט", low: "נמוך", high: "גבוה", custom: "ניקוי מותאם אישית", auto_wash: "ניקוי וייבוש בחזרה למעמד",
     auto_dry: "ייבוש מברשת אוטומטי", smart_dry: "ייבוש חכם", protection: "הגנה מפני לחות", timed_dry: "ייבוש מתוזמן",
-    traction: "הנעה", detergent: "ערבוב חומר ניקוי", moisture: "רגישות לחות", arm: "מצבי הזרוע", language: "שפת קול",
+    traction: "הנעה", detergent: "יחס חומר ניקוי", moisture: "רגישות לחות", arm: "מצבי הזרוע", language: "שפת קול",
     temperature: "טמפרטורת ברירת מחדל", return_wash: "ניקוי בחזרה למעמד", return_dry: "ייבוש בחזרה למעמד",
     scheduled_wash: "ניקוי מתוזמן", scheduled_dry: "ייבוש מתוזמן", repeat: "חזרה על תזמון", schedule_time: "שעת תזמון",
     start_clean: "ניקוי עצמי", resume_clean: "המשך ניקוי", stop_clean: "עצירת ניקוי", start_dry: "הפעלת ייבוש", stop_dry: "עצירת ייבוש",
@@ -62,7 +65,10 @@ const TEXT = {
     alert_unknown: "חלק מחיוויי ההתראות אינם זמינים; אין להסיק שהמכשיר ללא תקלות.",
     remaining: "נותרו", reset_confirm: "לאפס את מונה התחזוקה במכשיר? יש לאשר רק אחרי החלפה או תחזוקה לפי הוראות היצרן.",
     cancel: "ביטול", confirm: "אישור איפוס", waiting: "הפקודה נשלחה; ממתינים לדיווח המכשיר.",
-    wip: "מיפוי בפיתוח · חלק מהאפשרויות עדיין דורשות אימות במכשיר", empty: "אין נתונים זמינים להצגה בקבוצה זו.",
+    wip: "המיפוי אומת מול אפליקציית Dreamehome",
+    tab_home: "בית", tab_cleaning: "ניקוי", tab_device: "מכשיר", tab_record: "היסטוריה", tab_accessories: "אביזרים",
+    sec_mode: "מצב ניקוי", dirt_level: "רמת לכלוך היום", dirt_light: "קל", dirt_moderate: "בינוני", dirt_heavy: "כבד",
+    cleaning_record: "היסטוריית ניקוי", clean_today: "זמן ניקוי היום", clean_week: "זמן ניקוי (7 ימים)", clean_sessions: "ניקויים (7 ימים)", last_clean: "ניקוי אחרון", firmware: "קושחה", update_available: "עדכון זמין", empty: "אין נתונים זמינים להצגה בקבוצה זו.",
     setup: "לא נמצא מכשיר יחיד התואם לסוג שנבחר. יש להגדיר device_id או entity בכרטיס.",
     registry_error: "אין גישה לרשימת הישויות. אפשר להגדיר entities ידנית או לנסות שוב.", retry: "נסה שוב",
     offline: "המכשיר אינו מדווח כמחובר; פקדי התפעול מושבתים.", loading: "טוען את המכשיר…", error: "הפעולה נכשלה",
@@ -89,7 +95,7 @@ const TEXT = {
     hot_water: "Hot water", wash_mode: "Self-cleaning mode", dry_mode: "Drying mode", volume: "Voice volume",
     silent: "Silent", low: "Low", high: "High", custom: "Personalized cleaning", auto_wash: "Wash & dry on return",
     auto_dry: "Auto roller drying", smart_dry: "Smart drying", protection: "Moisture protection", timed_dry: "Timed drying",
-    traction: "Traction", detergent: "Detergent mixing", moisture: "Moisture sensitivity", arm: "Lifting arm modes", language: "Voice language",
+    traction: "Traction", detergent: "Cleaning solution ratio", moisture: "Moisture sensitivity", arm: "Lifting arm modes", language: "Voice language",
     temperature: "Default temperature", return_wash: "Return wash mode", return_dry: "Return dry mode",
     scheduled_wash: "Scheduled wash mode", scheduled_dry: "Scheduled dry mode", repeat: "Schedule repeat", schedule_time: "Scheduled time",
     start_clean: "Self-clean", resume_clean: "Resume cleaning", stop_clean: "Stop cleaning", start_dry: "Start drying", stop_dry: "Stop drying",
@@ -101,7 +107,10 @@ const TEXT = {
     alert_unknown: "Some alert states are unavailable; this does not prove the device is fault-free.",
     remaining: "remaining", reset_confirm: "Reset this maintenance counter on the device? Confirm only after replacement or manufacturer-recommended maintenance.",
     cancel: "Cancel", confirm: "Confirm reset", waiting: "Command sent; waiting for device telemetry.",
-    wip: "Mapping in progress · some controls still need physical verification", empty: "No data available for this section.",
+    wip: "Mapping verified against the Dreamehome app",
+    tab_home: "Home", tab_cleaning: "Cleaning", tab_device: "Device", tab_record: "Record", tab_accessories: "Accessories",
+    sec_mode: "Cleaning mode", dirt_level: "Dirt level today", dirt_light: "Light", dirt_moderate: "Moderate", dirt_heavy: "Heavy",
+    cleaning_record: "Cleaning record", clean_today: "Cleaning time today", clean_week: "Cleaning time (7 days)", clean_sessions: "Sessions (7 days)", last_clean: "Last cleaning", firmware: "Firmware", update_available: "update available", empty: "No data available for this section.",
     setup: "No single H15 found. Set device_id or entity in this card.",
     registry_error: "Cannot access the entity registry. Configure entities manually or retry.", retry: "Retry",
     offline: "Device is not reporting online; operation controls are disabled.", loading: "Loading device…", error: "Action failed",
@@ -121,6 +130,53 @@ const TEXT = {
     maintenance_required: "Maintenance required — clean or replace", maintenance_counter_ok: "Remaining life above maintenance threshold",
     maintenance_percent_unknown: "No verified remaining percentage", maintenance_hours_unknown: "Percentage unavailable; showing time reported by the device", maintenance_due: "Maintenance required",
   },
+};
+
+// Names below are copied from the Dreamehome w2449e plugin string tables (en/he)
+// so the card reads exactly like the app.
+Object.assign(TEXT.en, {
+  tab_mop: "Mopping Mode", tab_washdry: "Washing and Drying Settings", tab_devset: "Device Settings",
+  custom: "Custom Mode", customize: "Customize Settings", mode: "Customize Settings", suction: "Suction Setting", water: "Water Level",
+  hot_water: "Hot Water Temperature", temperature: "Set Hot Water Mode",
+  auto_dry: "Auto Roller Brush Drying", smart_dry: "Smart Drying", wash_dry_mode: "Set Wash & Dry Mode",
+  wash_mode: "Self-Cleaning Settings", dry_mode: "Drying Settings", auto_wash: "Return to Automatic Wash & Dry",
+  protection: "Smart Moisture Protection", advanced: "Advanced Settings", repeat: "Scheduled roller brush Wash & Dry",
+  schedule_time: "Start Time", moisture: "Roller Brush Moisture Detection",
+  voice_settings: "Voice Assistant and Volume Settings", language: "Voice Assistant", volume: "Adjust volume",
+  traction: "GlideWheel Traction Settings", arm: "Lifting Robotic Arm Settings", detergent: "Cleaning Solution Ratio Settings",
+  firmware: "Firmware Upgrade", cleaning_record: "Cleaning Record",
+  start_clean: "Self-Cleaning", stop_clean: "End Self-Cleaning", resume_clean: "Continue Self-Cleaning",
+  start_dry: "Drying", stop_dry: "End Drying",
+  arm_smart: "Smart Mode", arm_hot: "Hot Water Mode", arm_suction: "Suction Mode", arm_custom: "Custom Mode",
+});
+Object.assign(TEXT.he, {
+  tab_mop: "מצב ניגוב", tab_washdry: "הגדרות שטיפה וייבוש", tab_devset: "הגדרות המכשיר",
+  custom: "מצב התאמה אישית", customize: "הגדרות מותאמות אישית", mode: "הגדרות מותאמות אישית", suction: "עוצמת שאיבה", water: "רמת המים",
+  hot_water: "טמפרטורת המים החמים", temperature: "הגדרת מצב מים חמים",
+  auto_dry: "ייבוש עצמי אוטומטי של המברשת", smart_dry: "ייבוש חכם", wash_dry_mode: "מצב שטיפה עצמית וייבוש",
+  wash_mode: "הגדרות לניקוי עצמי", dry_mode: "הגדרות ייבוש", auto_wash: "החזרה לשטיפה ולייבוש אוטומטיים",
+  protection: "הגנת לחות חכמה", advanced: "הגדרות מתקדמות", repeat: "מברשת רולר יבשה לשטיפה מתוזמנת",
+  schedule_time: "זמן התחלה", moisture: "זיהוי לחות במברשת הגלגלית",
+  voice_settings: "הנחיה קולית ועוצמת קול", language: "הנחיה קולית", volume: "התאמת עוצמת הקול",
+  traction: "התאמת כוח הנעה עצמית", arm: "מתג זרוע רובוטית להרמה", detergent: "הגדרות יחס תמיסת הניקוי",
+  firmware: "שדרוג הקושחה", cleaning_record: "היסטוריית הניקיון",
+  start_clean: "ניקוי עצמי", stop_clean: "ניקוי עצמי הסתיים", resume_clean: "מתליל מחדש ניקוי עצמי",
+  start_dry: "ייבוש", stop_dry: "הייבוש הסתיים",
+  arm_smart: "מצב חכם", arm_hot: "מצב מים חמים", arm_suction: "מצב יניקה", arm_custom: "מצב התאמה אישית",
+});
+const OPTION_HE = {
+  mode: { "Quiet Mode": "מצב שקט", "Turbo Mode": "מצב טורבו", "Personalized Mode": "מצב מותאם אישית" },
+  suction: { Gentle: "חלשה", Standard: "רגיל", Strong: "גבוהה" },
+  water: { Standard: "רגיל", High: "רטובה", "Slightly dry": "יבשה מעט" },
+  hot_water: { Off: "כבוי", Mild: "עדין", Standard: "רגיל", Thermal: "תרמי" },
+  temperature: { Mild: "עדין", Standard: "רגיל", Thermal: "תרמי" },
+  wash_mode: { "Auto-Adjust": "התאמה אוטומטית", Standard: "רגיל", "Deep-Clean": "ניקוי עמוק" },
+  dry_mode: { "Super-Speed": "מהירות סופר-גבוהה", "High-Speed": "מהירות גבוהה" },
+  traction: { Gentle: "עדין", Balanced: "מתון", Turbo: "טורבו" },
+  moisture: { "Low Sensitivity": "רגישות נמוכה", "Medium Sensitivity": "רגישות בינונית", "High Sensitivity": "רגישות גבוהה" },
+  repeat: { None: "ללא", Once: "פעם אחת", "Whole Week": "שבוע שלם", Weekday: "ימי עבודה", Weekends: "ימי מנוחה" },
+  detergent: { "Smart Mode": "פרופורציות חכמות", "Powerful stain removal": "מסיר כתמים עוצמתי" },
+  language: { English: "אנגלית", German: "גרמנית", French: "צרפתית", Italian: "איטלקית", Spanish: "ספרדית", Dutch: "הולנדית", Portuguese: "פורטוגזית" },
 };
 
 const H14_ROLES = {
@@ -228,7 +284,7 @@ function serviceFor(role, state, value, roles = ROLES) {
     const { min, max, step } = state.attributes;
     if (!Number.isFinite(number) || !Number.isFinite(min) || !Number.isFinite(max) || !(step > 0) ||
       number < min || number > max || Math.abs((number - min) / step - Math.round((number - min) / step)) > 1e-6 ||
-      (role === "volume" && roles === ROLES && ![0, 1, 2].includes(number))) throw new Error("Unsupported number value");
+      (role === "volume" && roles === ROLES && ![0, 30, 60].includes(number))) throw new Error("Unsupported number value");
     return [domain, "set_value", { value: number }];
   }
   throw new Error("Read-only entity");
@@ -250,7 +306,7 @@ class DreameDeviceCard extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    this._tab = "operation";
+    this._tab = "mop";
     this._roles = {};
     this._entries = [];
     this._alerts = [];
@@ -336,6 +392,7 @@ class DreameDeviceCard extends HTMLElement {
   static getStubConfig() { return { title: "Dreame H15 Pro Heat" }; }
   static getConfigElement() { return document.createElement("dreame-device-card-editor"); }
   _t(key) { return TEXT[this._language][key] || key; }
+  _opt(role, option) { return (this._language === "he" && OPTION_HE[role]?.[option]) || option; }
   get _language() { return this._config?.language || (this._hass?.language?.startsWith("he") ? "he" : "en"); }
   get _direction() { return this._language === "he" ? "rtl" : "ltr"; }
   _navIcon(back = false) {
@@ -374,7 +431,7 @@ class DreameDeviceCard extends HTMLElement {
   _contextReady(role) {
     if (this._profile !== "H15") return true;
     if (["mode", "suction", "water", "hot_water"].includes(role) && this._state("custom")?.state !== "on") return false;
-    if (["suction", "water"].includes(role) && this._state("mode")?.attributes.raw_value !== 4 && this._state("mode")?.state !== "Personalized") return false;
+    if (["suction", "water"].includes(role) && this._state("mode")?.attributes.raw_value !== 4 && !["Personalized", "Personalized Mode"].includes(this._state("mode")?.state)) return false;
     if (role === "suction" && this._state("hot_water")?.attributes.raw_value !== 0 && this._state("hot_water")?.state !== "Off") return false;
     return true;
   }
@@ -417,6 +474,8 @@ class DreameDeviceCard extends HTMLElement {
     if (!state || BAD_STATES.has(state.state)) return this._t(state?.state === "unavailable" ? "unavailable" : "unknown");
     if (role === "online") return this._t(state.state === "on" ? "connected" : state.state === "off" ? "disconnected" : "unknown");
     if (role === "charging") return this._t(state.state === "on" ? "yes" : "no");
+    if (this._roleMap?.[role]?.[0] === "select") return this._opt(role, state.state);
+    if (role === "firmware") return `${state.attributes.installed_version || ""}${state.state === "on" ? ` · ${this._t("update_available")} ${state.attributes.latest_version || ""}` : ""}`;
     if (this._hass.formatEntityState) return this._hass.formatEntityState(state);
     return `${state.state}${state.attributes.unit_of_measurement ? ` ${state.attributes.unit_of_measurement}` : ""}`;
   }
@@ -435,7 +494,7 @@ class DreameDeviceCard extends HTMLElement {
   }
   _control(role) {
     if (!this._roles[role] || !this._state(role) || !this._roleMap[role]) return "";
-    if (this._profile === "H15" && ["suction", "water"].includes(role) && this._state("mode")?.state !== "Personalized" && this._state("mode")?.attributes.raw_value !== 4) return "";
+    if (this._profile === "H15" && ["suction", "water"].includes(role) && !["Personalized", "Personalized Mode"].includes(this._state("mode")?.state) && this._state("mode")?.attributes.raw_value !== 4) return "";
     const state = this._state(role);
     const disabled = this._ready(role) ? "" : "disabled";
     let input = "";
@@ -447,13 +506,14 @@ class DreameDeviceCard extends HTMLElement {
       input = `<input aria-label="${label}" type="checkbox" role="switch" data-role="${role}" ${state.state === "on" ? "checked" : ""} ${disabled}>`;
       if (BAD_STATES.has(state.state)) input += `<small>${escapeHTML(this._value(role))}</small>`;
     } else if (role === "volume" && this._profile === "H15") {
-      const known = !BAD_STATES.has(state.state) && [0, 1, 2].includes(Number(state.state));
+      const level = [0, 30, 60].indexOf(Number(state.state));
+      const known = !BAD_STATES.has(state.state) && level >= 0;
       const levels = [this._t("silent"), this._t("low"), this._t("high")];
-      input = `<div class="volume" dir="${this._direction}"><input dir="${this._direction}" aria-label="${label}" aria-valuetext="${escapeHTML(known ? levels[Number(state.state)] : this._t("unknown"))}" type="range" min="0" max="2" step="1" data-role="volume" value="${known ? Number(state.state) : 0}" ${known ? disabled : "disabled"}>
-        <div class="levels">${levels.map((l, i) => `<span class="${known && Number(state.state) === i ? "selected" : ""}">${l}</span>`).join("")}</div>${known ? "" : `<small>${escapeHTML(this._value(role))}</small>`}</div>`;
+      input = `<div class="volume" dir="${this._direction}"><input dir="${this._direction}" aria-label="${label}" aria-valuetext="${escapeHTML(known ? levels[level] : this._t("unknown"))}" type="range" min="0" max="2" step="1" data-role="volume" value="${known ? level : 0}" ${known ? disabled : "disabled"}>
+        <div class="levels">${levels.map((l, i) => `<span class="${known && level === i ? "selected" : ""}">${l}</span>`).join("")}</div>${known ? "" : `<small>${escapeHTML(this._value(role))}</small>`}</div>`;
     } else if (role === "schedule_time") {
       const raw = Number(state.state);
-      const time = !BAD_STATES.has(state.state) && Number.isInteger(raw) && raw >= 0 && raw < 1440 ? `${String(Math.floor(raw / 60)).padStart(2, "0")}:${String(raw % 60).padStart(2, "0")}` : "";
+      const time = !BAD_STATES.has(state.state) && Number.isInteger(raw) && raw >= 0 && raw < 86400 ? `${String(Math.floor(raw / 3600)).padStart(2, "0")}:${String(Math.floor(raw / 60) % 60).padStart(2, "0")}` : "";
       input = `<input aria-label="${label}" type="time" step="60" data-role="${role}" value="${time}" ${disabled}>`;
     }
     if (!input && this._roleMap[role][0] === "number") {
@@ -569,29 +629,49 @@ class DreameDeviceCard extends HTMLElement {
     if (!due.length) return "";
     return `<button class="maintenance-notice" data-tab="maintenance"><ha-icon icon="mdi:tools"></ha-icon><span>${this._t("maintenance_due")} — ${due.map((r) => this._t(r)).join(" · ")}</span><ha-icon icon="${this._navIcon()}"></ha-icon></button>`;
   }
+  _home() {
+    const active = ["clean_progress", "dry_progress"].filter((r) => { const v = Number(this._state(r)?.state); return Number.isFinite(v) && v > 0; });
+    const record = ["clean_today", "clean_week", "clean_sessions", "last_clean"].some((r) => this._roles[r]);
+    return `<div class="actions">${this._button("start_clean", "mdi:water-sync")}${this._button("resume_clean", "mdi:play")}${this._button("stop_clean", "mdi:stop")}${this._button("start_dry", "mdi:hair-dryer")}${this._button("stop_dry", "mdi:stop")}</div>
+      ${active.length ? `<div class="metrics">${active.map((r) => this._metric(r, r === "clean_progress" ? "mdi:water-sync" : "mdi:hair-dryer")).join("")}</div>` : ""}
+      ${record ? `<button class="setting-group" data-group="record"><div><strong>${this._t("cleaning_record")}</strong><small>${escapeHTML(this._value("clean_today"))} · ${escapeHTML(this._value("last_clean"))}</small></div><ha-icon icon="${this._navIcon()}"></ha-icon></button>` : ""}`;
+  }
   _panel() {
-    if (this._tab === "operation") {
-      if (this._choice) {
-        const options = this._state(this._choice)?.attributes.options || [];
-        return `<div class="subheading"><button data-back aria-label="${this._t("back")}"><ha-icon icon="${this._navIcon(true)}"></ha-icon></button><strong>${escapeHTML(this._t(this._choice))}</strong></div>
-          <div class="choice-list">${options.map((option) => `<button data-option="${escapeHTML(option)}" aria-pressed="${option === this._draftOption}" ${this._ready(this._choice) ? "" : "disabled"}><span>${escapeHTML(option)}</span><ha-icon icon="${option === this._draftOption ? "mdi:check-circle" : "mdi:circle-outline"}"></ha-icon></button>`).join("")}</div>
-          <button class="save-choice" data-save-option ${this._ready(this._choice) && options.includes(this._draftOption) ? "" : "disabled"}>${this._t("save")}</button>`;
-      }
-      const groups = {
-        cleaning_settings: ["mode", "suction", "water", "hot_water", "detergent", "temperature"],
-        wash_settings: ["wash_mode", "dry_mode", "auto_dry", "smart_dry", "auto_wash", "return_wash", "return_dry", "protection"],
-        device_settings: ["traction", "arm", "arm_smart", "arm_hot", "arm_suction", "arm_custom", "volume", "language"],
-        advanced: ["moisture", "timed_dry", "scheduled_wash", "scheduled_dry", "schedule_time", "repeat"],
-      };
-      if (groups[this._settings]) {
-        const controls = groups[this._settings].map((role) => this._control(role)).join("");
-        return `<div class="subheading"><button data-back aria-label="${this._t("back")}"><ha-icon icon="${this._navIcon(true)}"></ha-icon></button><strong>${this._t(this._settings)}</strong></div>${controls || `<p class="muted">${this._t("empty")}</p>`}${this._settings === "advanced" ? `<p class="muted">${this._t("schedule_note")}</p>` : ""}`;
-      }
-      const row = (group, subtitle) => groups[group].some((r) => this._roles[r]) ? `<button class="setting-group" data-group="${group}"><div><strong>${this._t(group)}</strong><small>${escapeHTML(subtitle)}</small></div><ha-icon icon="${this._navIcon()}"></ha-icon></button>` : "";
-      return `<div class="actions">${this._button("start_clean", "mdi:water-sync")}${this._button("resume_clean", "mdi:play")}${this._button("stop_clean", "mdi:stop")}${this._button("start_dry", "mdi:hair-dryer")}${this._button("stop_dry", "mdi:stop")}</div>
-        ${this._control("custom")}${row("cleaning_settings", this._value("mode"))}${row("wash_settings", ["wash_mode", "dry_mode"].filter((r) => this._roles[r]).map((r) => this._value(r)).join(" · "))}${row("device_settings", `${this._t("traction")} · ${this._t("arm")} · ${this._t("volume")}`)}${row("advanced", this._t("schedule_note"))}`;
+    const back = (title) => `<div class="subheading"><button data-back aria-label="${this._t("back")}"><ha-icon icon="${this._navIcon(true)}"></ha-icon></button><strong>${escapeHTML(title)}</strong></div>`;
+    if (this._choice) {
+      const options = this._state(this._choice)?.attributes.options || [];
+      return `${back(this._t(this._choice))}
+        <div class="choice-list">${options.map((option) => `<button data-option="${escapeHTML(option)}" aria-pressed="${option === this._draftOption}" ${this._ready(this._choice) ? "" : "disabled"}><span>${escapeHTML(this._opt(this._choice, option))}</span><ha-icon icon="${option === this._draftOption ? "mdi:check-circle" : "mdi:circle-outline"}"></ha-icon></button>`).join("")}</div>
+        <button class="save-choice" data-save-option ${this._ready(this._choice) && options.includes(this._draftOption) ? "" : "disabled"}>${this._t("save")}</button>`;
     }
-    if (this._tab === "status") return `<div class="metrics">${this._metric("work", "mdi:state-machine")}${this._metric("charging", "mdi:battery-charging")}${this._metric("clean_progress", "mdi:water-sync")}${this._metric("dry_progress", "mdi:hair-dryer")}${this._metric("clean_count", "mdi:counter")}${this._metric("runtime", "mdi:timer-outline")}</div><h3>${this._t("alerts")}</h3>${this._alertList()}`;
+    const controls = (roles) => roles.map((role) => this._control(role)).join("");
+    const metrics = (items) => { const body = items.map(([role, icon]) => this._metric(role, icon)).join(""); return body ? `<div class="metrics">${body}</div>` : ""; };
+    const group = (key, roles, subtitle) => roles.some((r) => this._roles[r]) ? `<button class="setting-group" data-group="${key}"><div><strong>${this._t(key)}</strong><small>${escapeHTML(subtitle)}</small></div><ha-icon icon="${this._navIcon()}"></ha-icon></button>` : "";
+    const sub = {
+      customize: ["mode", "suction", "water", "hot_water"],
+      wash_dry_mode: ["wash_mode", "dry_mode"],
+      advanced: ["repeat", "schedule_time", "moisture"],
+      voice_settings: ["language", "volume"],
+    };
+    if (this._settings === "record") {
+      const dirt = this._state("clean_today");
+      const split = dirt && !BAD_STATES.has(dirt.state) ? ["light", "moderate", "heavy"].map((lvl) => `${this._t("dirt_" + lvl)} ${dirt.attributes[lvl + "_dirt_percent"] ?? 0}%`).join(" · ") : "";
+      return `${back(this._t("cleaning_record"))}${metrics([["clean_today", "mdi:timer-outline"], ["clean_week", "mdi:calendar-week"], ["clean_sessions", "mdi:counter"], ["last_clean", "mdi:history"], ["clean_count", "mdi:counter"]])}${split ? `<h3>${this._t("dirt_level")}</h3><p class="muted">${escapeHTML(split)}</p>` : ""}`;
+    }
+    if (sub[this._settings]) {
+      const body = controls(sub[this._settings]);
+      return `${back(this._t(this._settings))}${body || `<p class="muted">${this._t("empty")}</p>`}${this._settings === "advanced" ? `<p class="muted">${this._t("schedule_note")}</p>` : ""}`;
+    }
+    if (this._tab === "mop") {
+      const custom = this._state("custom")?.state === "on";
+      return `${controls(["custom"])}${group("customize", sub.customize, custom ? this._value("mode") : "")}${controls(["temperature"])}` || `<p class="muted">${this._t("empty")}</p>`;
+    }
+    if (this._tab === "washdry") {
+      return `${controls(["auto_dry", "smart_dry"])}${group("wash_dry_mode", sub.wash_dry_mode, ["wash_mode", "dry_mode"].filter((r) => this._roles[r]).map((r) => this._value(r)).join(" · "))}${controls(["auto_wash", "protection", ...(this._profile === "H14" ? ["timed_dry"] : [])])}${group("advanced", sub.advanced, this._value("repeat"))}`;
+    }
+    if (this._tab === "devset") {
+      return `${group("voice_settings", sub.voice_settings, this._value("language"))}${controls(["traction", "arm", "arm_smart", "arm_hot", "arm_suction", "arm_custom"])}${metrics([["firmware", "mdi:chip"]])}`;
+    }
     return `<h3>${this._t("tanks")}</h3>${this._tank("clean")}${this._tank("dirty")}${this._consumable("filter", "reset_filter")}${this._consumable("brush", "reset_brush")}<h3>${this._t("alerts")}</h3>${this._alertList()}`;
   }
   _render() {
@@ -615,7 +695,8 @@ class DreameDeviceCard extends HTMLElement {
       <div class="summary">${this._metric("battery", "mdi:battery")}${this._metric("online", "mdi:wifi")}</div>
       ${this._faultNotice()}
       ${this._maintenanceNotice()}
-      <nav role="tablist" aria-label="Dreame">${["operation", "status", "maintenance"].map((tab) => `<button role="tab" id="tab-${tab}" aria-controls="device-panel" aria-selected="${this._tab === tab}" data-tab="${tab}">${this._t(tab)}</button>`).join("")}</nav>
+      ${ready ? this._home() : ""}
+      <nav role="tablist" aria-label="Dreame">${["mop", "washdry", "devset", "maintenance"].map((tab) => `<button role="tab" id="tab-${tab}" aria-controls="device-panel" aria-selected="${this._tab === tab}" data-tab="${tab}">${this._t(tab === "maintenance" ? "maintenance" : "tab_" + tab)}</button>`).join("")}</nav>
       ${this._registryError ? `<p class="notice">${escapeHTML(this._registryError)} <button data-retry>${this._t("retry")}</button></p>` : ""}
       ${!ready ? `<p class="notice">${this._t(this._resolving ? "loading" : "setup")} ${!this._resolving ? `<button data-retry>${this._t("retry")}</button>` : ""}</p>` : ""}
       ${ready && !this._online() ? `<p class="notice">${this._t("offline")}</p>` : ""}
@@ -686,8 +767,9 @@ class DreameDeviceCard extends HTMLElement {
       if (!/^\d{2}:\d{2}$/.test(value)) return;
       const [hours, minutes] = value.split(":").map(Number);
       if (hours > 23 || minutes > 59) return;
-      value = hours * 60 + minutes;
+      value = hours * 3600 + minutes * 60;
     }
+    if (role === "volume" && this._profile === "H15") value = [0, 30, 60][Number(value)] ?? value;
     target.blur();
     this._act(role, value);
   }
@@ -857,10 +939,10 @@ class DreameDeviceCardEditor extends HTMLElement {
     const devices = (this._devices || []).filter((d) => profile === "auto" ? deviceProfile(d, this._entries) : deviceProfile(d, this._entries) === profile);
     const profilePicker = `<label>${this._t("device_type")}<select data-field="model">${["H15", "H14", "auto"].map((p) => `<option value="${p}" ${p === profile ? "selected" : ""}>${p === "auto" ? this._t("automatic") : p}</option>`).join("")}</select></label><label>${this._t("device")}<select data-field="device_id"><option value="">${this._t("automatic")}</option>${devices.map((d) => `<option value="${escapeHTML(d.id)}" ${d.id === this._config.device_id ? "selected" : ""}>${escapeHTML(d.name_by_user || d.name || d.model)}</option>`).join("")}</select></label><small>${this._t("profile_note")}</small>`;
     const groups = {
-      status: ["vacuum", "battery", "work", "online", "charging", "clean_progress", "dry_progress", "clean_count", "runtime"],
+      status: ["vacuum", "battery", "work", "online", "charging", "clean_progress", "dry_progress", "clean_count", "runtime", "clean_today", "clean_week", "clean_sessions", "last_clean", "firmware"],
       tanks: ["clean_empty", "clean_empty_error", "dirty_full", "dirty_missing", "dirty_cleaning", "dirty_blocked", "warnings", "errors"],
       maintenance: ["filter", "brush", "filter_worn", "brush_worn", "reset_filter", "reset_brush"],
-      operation: Object.keys(ROLES).filter((r) => !["vacuum", "battery", "work", "online", "charging", "clean_progress", "dry_progress", "clean_count", "runtime", "clean_empty", "clean_empty_error", "dirty_full", "dirty_missing", "dirty_cleaning", "dirty_blocked", "warnings", "errors", "filter", "brush", "filter_worn", "brush_worn", "reset_filter", "reset_brush"].includes(r)),
+      operation: Object.keys(ROLES).filter((r) => !["vacuum", "battery", "work", "online", "charging", "clean_progress", "dry_progress", "clean_count", "runtime", "clean_today", "clean_week", "clean_sessions", "last_clean", "firmware", "clean_empty", "clean_empty_error", "dirty_full", "dirty_missing", "dirty_cleaning", "dirty_blocked", "warnings", "errors", "filter", "brush", "filter_worn", "brush_worn", "reset_filter", "reset_brush"].includes(r)),
     };
     const html = `<style>:host{display:block;color:var(--primary-text-color);font:inherit}label{display:grid;gap:6px;font-size:13px;margin:12px 0}input,select{font:inherit;color:inherit;background:var(--secondary-background-color);border:1px solid var(--divider-color);border-radius:8px;padding:10px;box-sizing:border-box;width:100%;min-height:44px}small{display:block;color:var(--secondary-text-color);line-height:1.5}details{border-top:1px solid var(--divider-color);margin-top:14px}summary{padding:14px 0;cursor:pointer}h3{font-size:15px}</style>
       <div dir="${(lang || this._hass?.language || "en").startsWith("he") ? "rtl" : "ltr"}">
