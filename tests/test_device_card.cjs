@@ -648,3 +648,14 @@ test('H15 schedule start time is sent in seconds after midnight, like the app', 
   c._change({ target: { dataset: { role: 'schedule_time' }, type: 'time', value: '07:30', blur() {} } });
   assert.deepEqual(sent, ['schedule_time', 27000]);
 });
+
+test('device badge stays a circle even when a dashboard override changes .hero height', () => {
+  const css = get('DREAME_STYLES');
+  const rule = css.match(/ha-card \.device-badge>\.hero\{([^}]*)\}/);
+  assert.ok(rule, 'guard rule for the badge exists');
+  assert.match(rule[1], /width:var\(--dreame-badge-size\)!important/);
+  assert.match(rule[1], /height:var\(--dreame-badge-size\)!important/);
+  assert.match(rule[1], /aspect-ratio:1\/1/);
+  // The guard must come after the plain .hero rules so it wins on equal !important.
+  assert.ok(css.lastIndexOf('ha-card .device-badge>.hero{') > css.lastIndexOf('.hero{position:relative'));
+});
