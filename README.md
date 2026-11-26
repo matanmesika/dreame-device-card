@@ -43,7 +43,7 @@ Captured from the shipping card using the entity states of a real H15 Pro Heat i
 | :---: | :---: |
 | ![Light theme](https://raw.githubusercontent.com/matanmesika/dreame-device-card/main/docs/screenshots/mopping-mode-light.png) | ![H14 dashboard](https://raw.githubusercontent.com/matanmesika/dreame-device-card/main/docs/screenshots/mopping-mode-h14.png) |
 
-The light-theme and H14 images use sample values from [the browser capture test](tests/render_demo_gallery.cjs). What the card shows always depends on the entities your integration provides.
+The light-theme and H14 images use sample values. What the card shows always depends on the entities your integration provides.
 
 ## What the card does
 
