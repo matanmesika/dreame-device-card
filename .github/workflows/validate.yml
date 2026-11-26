@@ -20,7 +20,7 @@ jobs:
       - name: Check distributed JavaScript syntax
         run: node --check dist/dreame-device-card.js
       - name: Run regression tests
-        run: node --test tests/test_device_card.cjs
+        run: node --test tests/test_device_card.cjs tests/test_readme_gallery.cjs
       - name: Validate HACS product layout
         run: |
           node - <<'NODE'
