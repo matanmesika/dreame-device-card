@@ -65,7 +65,6 @@ const TEXT = {
     alert_unknown: "חלק מחיוויי ההתראות אינם זמינים; אין להסיק שהמכשיר ללא תקלות.",
     remaining: "נותרו", reset_confirm: "לאפס את מונה התחזוקה במכשיר? יש לאשר רק אחרי החלפה או תחזוקה לפי הוראות היצרן.",
     cancel: "ביטול", confirm: "אישור איפוס", waiting: "הפקודה נשלחה; ממתינים לדיווח המכשיר.",
-    wip: "המיפוי אומת מול אפליקציית Dreamehome",
     tab_home: "בית", tab_cleaning: "ניקוי", tab_device: "מכשיר", tab_record: "היסטוריה", tab_accessories: "אביזרים",
     sec_mode: "מצב ניקוי", dirt_level: "רמת לכלוך היום", dirt_light: "קל", dirt_moderate: "בינוני", dirt_heavy: "כבד",
     cleaning_record: "היסטוריית ניקוי", clean_today: "זמן ניקוי היום", clean_week: "זמן ניקוי (7 ימים)", clean_sessions: "ניקויים (7 ימים)", last_clean: "ניקוי אחרון", firmware: "קושחה", update_available: "עדכון זמין", empty: "אין נתונים זמינים להצגה בקבוצה זו.",
@@ -81,7 +80,7 @@ const TEXT = {
     tank_no_alert: "אין התראה מדווחת", tank_normal: "תקין", tank_note: "לא מדווח אחוז או מפלס רציף; המצב מבוסס על חיוויי המכשיר שאומתו.",
     tank_partial: "חלק מחיוויי המיכל אינם זמינים.", fault_reported: "המכשיר מדווח על תקלה", warning_reported: "המכשיר מדווח על אזהרה",
     show_maintenance: "פתיחת תחזוקה", native: "חלון המכשיר המובנה",
-    warnings: "אזהרות", errors: "שגיאות", vacuum: "ישות השואב הראשית", editor_title: "כותרת", editor_language: "שפת הכרטיס",
+    warnings: "אזהרות", errors: "שגיאות", vacuum: "ישות השואב הראשית", editor_title: "כותרת", editor_language: "שפת הכרטיס", editor_height: "גובה קבוע לכרטיס (פיקסלים, ריק = אוטומטי)",
     automatic: "אוטומטי", editor_entities: "בחירת ישויות ידנית",
     editor_note: "השאר אוטומטי לזיהוי מהמכשיר, או בחר לכל חיווי ישות מתאימה. ההגדרה משנה רק את הכרטיס.",
     filter_worn: "התראת שחיקת פילטר", brush_worn: "התראת שחיקת מברשת",
@@ -107,7 +106,6 @@ const TEXT = {
     alert_unknown: "Some alert states are unavailable; this does not prove the device is fault-free.",
     remaining: "remaining", reset_confirm: "Reset this maintenance counter on the device? Confirm only after replacement or manufacturer-recommended maintenance.",
     cancel: "Cancel", confirm: "Confirm reset", waiting: "Command sent; waiting for device telemetry.",
-    wip: "Mapping verified against the Dreamehome app",
     tab_home: "Home", tab_cleaning: "Cleaning", tab_device: "Device", tab_record: "Record", tab_accessories: "Accessories",
     sec_mode: "Cleaning mode", dirt_level: "Dirt level today", dirt_light: "Light", dirt_moderate: "Moderate", dirt_heavy: "Heavy",
     cleaning_record: "Cleaning record", clean_today: "Cleaning time today", clean_week: "Cleaning time (7 days)", clean_sessions: "Sessions (7 days)", last_clean: "Last cleaning", firmware: "Firmware", update_available: "update available", empty: "No data available for this section.",
@@ -123,7 +121,7 @@ const TEXT = {
     tank_no_alert: "No reported alert", tank_normal: "Normal", tank_note: "No percentage or continuous water level is reported; status uses verified device indicators.",
     tank_partial: "Some tank indicators are unavailable.", fault_reported: "Device reports a fault", warning_reported: "Device reports a warning",
     show_maintenance: "Open maintenance", native: "Native device dialog",
-    warnings: "Warnings", errors: "Errors", vacuum: "Primary vacuum entity", editor_title: "Title", editor_language: "Card language",
+    warnings: "Warnings", errors: "Errors", vacuum: "Primary vacuum entity", editor_title: "Title", editor_language: "Card language", editor_height: "Fixed card height (px, empty = automatic)",
     automatic: "Automatic", editor_entities: "Manual entity selection",
     editor_note: "Leave Automatic to discover from the device, or choose an entity for each indicator. This only changes the card.",
     filter_worn: "Filter wear alert", brush_worn: "Brush wear alert",
@@ -220,6 +218,7 @@ function validateConfig(config) {
   if (config.image && (typeof config.image !== "string" || !/^\/(?:local|api|hacsfiles)\/[^?#\s]+(?:\?[^#]*)?$/.test(config.image))) {
     throw new Error("image must be a local /local/, /api/ or /hacsfiles/ URL");
   }
+  if (config.height !== undefined && !(Number(config.height) >= 0)) throw new Error("height must be a number of pixels");
   if (config.language && !["he", "en"].includes(config.language)) throw new Error("language must be he or en");
   return { ...config, entities: { ...entities } };
 }
@@ -342,6 +341,10 @@ class DreameDeviceCard extends HTMLElement {
   }
   setConfig(config) {
     this._config = validateConfig(config);
+    const height = Number(this._config.height);
+    // Optional fixed height: every tab keeps the same card size and the panel scrolls.
+    this.toggleAttribute?.("fixed-height", height > 0);
+    if (height > 0) this.style?.setProperty("--dreame-card-height", `${height}px`); else this.style?.removeProperty("--dreame-card-height");
     this._generation++;
     this._discoverySerial++;
     this._pending = false; // A previous device's unfinished command is obsolete.
@@ -702,7 +705,7 @@ class DreameDeviceCard extends HTMLElement {
       ${ready && !this._online() ? `<p class="notice">${this._t("offline")}</p>` : ""}
       ${this._message ? `<p class="notice" role="status">${escapeHTML(this._message)}</p>` : ""}
       ${confirm}<div id="device-panel" role="tabpanel" aria-labelledby="tab-${this._tab}" class="panel">${ready ? this._panel() : ""}</div>
-      <footer>${this._t("wip")}</footer></ha-card>`;
+      </ha-card>`;
     // Unrelated HA updates must not recreate controls or reset scrolling.
     if (html === this._renderedHTML) return;
     const previousPanel = this.shadowRoot.querySelector("#device-panel");
@@ -823,6 +826,8 @@ const DREAME_STYLES = `
   /* Mobile uses Home Assistant's page scrolling: never trap or clip the bottom
      settings rows and footer behind a 340px nested scroll region on iPhone. */
   @media(max-width:600px){.panel{max-height:none;overflow:visible;overscroll-behavior:auto}}
+  /* Optional fixed card height (config: height): the card keeps one size on every tab and the panel scrolls. */
+  :host([fixed-height]) ha-card{height:var(--dreame-card-height);display:flex;flex-direction:column}:host([fixed-height]) ha-card>*{flex-shrink:0}:host([fixed-height]) .panel{flex:1 1 0;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain}
   .setting-group{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;background:transparent;text-align:start;border:0;border-bottom:1px solid var(--divider-color);border-radius:0;padding:12px 2px;font-size:12px}
   .setting-group strong{font-weight:500}.setting-group small{display:block;font-size:10px;margin-top:4px;color:var(--secondary-text-color)}.setting-group ha-icon{--mdc-icon-size:18px;color:var(--secondary-text-color)}
   .setting-value{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;font-size:11px;padding:7px;text-align:start;overflow-wrap:anywhere}.setting-value ha-icon{--mdc-icon-size:16px;flex-shrink:0}
@@ -910,7 +915,10 @@ class DreameDeviceCardEditor extends HTMLElement {
         if (field === "device_id") delete config.entity;
         else delete config.device_id;
       }
-      if (value) config[field] = value;
+      if (field === "height") {
+        if (Number(value) > 0) config.height = Math.round(Number(value));
+        else delete config.height;
+      } else if (value) config[field] = value;
       else delete config[field];
     } else return;
     this._config = validateConfig(config);
@@ -952,6 +960,7 @@ class DreameDeviceCardEditor extends HTMLElement {
       <div dir="${(lang || this._hass?.language || "en").startsWith("he") ? "rtl" : "ltr"}">
       <label>${this._t("editor_title")}<input data-field="title" value="${escapeHTML(this._config.title || "")}"></label>
       <label>${this._t("editor_language")}<select data-field="language"><option value="" ${!lang ? "selected" : ""}>${this._t("automatic")}</option><option value="he" ${lang === "he" ? "selected" : ""}>עברית</option><option value="en" ${lang === "en" ? "selected" : ""}>English</option></select></label>
+      <label>${this._t("editor_height")}<input type="number" min="0" step="10" inputmode="numeric" data-field="height" value="${escapeHTML(String(this._config.height || ""))}"></label>
       <h3>${this._t("editor_entities")}</h3><small>${this._t("editor_note")}</small>
       ${profilePicker}${Object.entries(groups).map(([group, roles]) => `<details data-group="${group}" ${this._groups.has(group) ? "open" : ""}><summary>${this._t(group)}</summary>${this._groups.has(group) ? roles.map((r) => this._picker(r)).join("") : ""}</details>`).join("")}</div>`;
     if (html === this._html) return;

@@ -19,7 +19,7 @@ test('Dreame company logo is first and gallery appears before installation instr
   assert.match(logo, /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg"/);
   assert.match(logo, /<rect [^>]*fill="#ffffff"/, 'logo keeps a light tile so it is readable in dark HACS themes');
   assert(readme.indexOf('## Dashboard screenshots') > 0);
-  assert(readme.indexOf('## Dashboard screenshots') < readme.indexOf('## Install manually through HACS'));
+  assert(readme.indexOf('## Dashboard screenshots') < readme.indexOf('## Installation'));
 });
 
 test('all gallery images are present, referenced, and valid PNG files', () => {

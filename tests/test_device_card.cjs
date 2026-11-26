@@ -659,3 +659,34 @@ test('device badge stays a circle even when a dashboard override changes .hero h
   // The guard must come after the plain .hero rules so it wins on equal !important.
   assert.ok(css.lastIndexOf('ha-card .device-badge>.hero{') > css.lastIndexOf('.hero{position:relative'));
 });
+
+test('optional height keeps the card one fixed size and validates the value', () => {
+  const Card = elements.get('dreame-device-card');
+  const c = new Card();
+  const attrs = new Map();
+  const props = new Map();
+  c.toggleAttribute = (name, on) => (on ? attrs.set(name, '') : attrs.delete(name));
+  c.style = { setProperty: (k, v) => props.set(k, v), removeProperty: (k) => props.delete(k) };
+  c.setConfig({ model: 'H15', height: 720 });
+  assert.equal(attrs.has('fixed-height'), true);
+  assert.equal(props.get('--dreame-card-height'), '720px');
+  c.setConfig({ model: 'H15' });
+  assert.equal(attrs.has('fixed-height'), false);
+  assert.equal(props.has('--dreame-card-height'), false);
+  assert.throws(() => c.setConfig({ model: 'H15', height: 'tall' }), /height/);
+  assert.match(fs.readFileSync(path.join(__dirname, '../dist/dreame-device-card.js'), 'utf8'), /:host\(\[fixed-height\]\) \.panel\{flex:1 1 0/);
+});
+
+test('the card has no footer caption and the editor can set or clear the height', () => {
+  const src = fs.readFileSync(path.join(__dirname, '../dist/dreame-device-card.js'), 'utf8');
+  assert.doesNotMatch(src, /<footer>/);
+  assert.doesNotMatch(src, /Mapping verified against the Dreamehome app/);
+  const editor = new (elements.get('dreame-device-card-editor'))();
+  editor._render = () => {};
+  editor.setConfig({ model: 'H15', language: 'en' });
+  editor._change({ target: { dataset: { field: 'height' }, value: '720' } });
+  assert.equal(editor._config.height, 720);
+  assert.equal(editor.events.at(-1).detail.config.height, 720);
+  editor._change({ target: { dataset: { field: 'height' }, value: '' } });
+  assert.equal(editor._config.height, undefined);
+});

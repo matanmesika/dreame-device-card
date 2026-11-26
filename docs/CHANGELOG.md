@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.0 — 2026-11-26
+
+- New `height` option (also in the visual editor): fixed card size on every tab, content scrolls inside.
+- Removed the "Mapping verified against the Dreamehome app" caption.
+- README rewritten with real-installation screenshots and setup/entity reference.
+
 ## v1.1.0 — 2026-11-13
 
 - H15 tabs, order and names now match the Dreamehome app (Mopping Mode · Washing and Drying Settings · Device Settings · Maintenance), with the app's Hebrew strings.

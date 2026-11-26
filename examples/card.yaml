@@ -1,6 +1,7 @@
 type: custom:dreame-device-card
-language: en
 model: H15
+language: en
 title: H15 Pro Heat
-# Optional: entity: sensor.YOUR_REAL_DREAME_ENTITY
+# Optional: fixed card size in pixels; every tab keeps it and the content scrolls inside.
+height: 720
 # Optional: device_id: YOUR_REAL_HA_DEVICE_ID
