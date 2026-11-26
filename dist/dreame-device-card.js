@@ -215,7 +215,7 @@ function validateConfig(config) {
       throw new Error(`Invalid entity for role: ${role}`);
     }
   }
-  if (config.image && (typeof config.image !== "string" || !/^\/(?:local|api|hacsfiles)\/[^?#\s]+(?:\?[^#]*)?$/.test(config.image))) {
+  if (config.image && config.image !== "none" && (typeof config.image !== "string" || !/^\/(?:local|api|hacsfiles)\/[^?#\s]+(?:\?[^#]*)?$/.test(config.image))) {
     throw new Error("image must be a local /local/, /api/ or /hacsfiles/ URL");
   }
   if (config.height !== undefined && !(Number(config.height) >= 0)) throw new Error("height must be a number of pixels");
@@ -289,6 +289,8 @@ function serviceFor(role, state, value, roles = ROLES) {
   throw new Error("Read-only entity");
 }
 
+// H15 Pro Heat photo shipped next to the card (HACS installs both into www/community/dreame-device-card/).
+const DEFAULT_H15_IMAGE = "/local/community/dreame-device-card/h15_pro_heat_app.png";
 const DEVICE_ART = `<svg viewBox="0 0 200 300" aria-hidden="true">
   <defs><linearGradient id="body"><stop stop-color="#24272c"/><stop offset=".5" stop-color="#525960"/><stop offset="1" stop-color="#202329"/></linearGradient></defs>
   <ellipse cx="100" cy="276" rx="74" ry="12" fill="currentColor" opacity=".08"/>
@@ -319,6 +321,8 @@ class DreameDeviceCard extends HTMLElement {
       if (event.target?.classList?.contains("dreame-wordmark")) {
         event.target.parentElement?.classList.add("logo-failed");
       }
+      // Bundled photo missing (e.g. a manual install without it): fall back to the drawing.
+      if (event.target?.classList?.contains("device-photo") && !this._config?.image) { this._photoFailed = true; this._render(); }
     }, true);
     this.shadowRoot.addEventListener("click", (event) => this._click(event));
     this.shadowRoot.addEventListener("change", (event) => this._change(event));
@@ -400,6 +404,12 @@ class DreameDeviceCard extends HTMLElement {
   get _direction() { return this._language === "he" ? "rtl" : "ltr"; }
   _navIcon(back = false) {
     return `mdi:${back ? "arrow" : "chevron"}-${(this._direction === "rtl") === back ? "right" : "left"}`;
+  }
+  _photo() {
+    const image = this._config?.image;
+    if (image === "none") return "";
+    if (image) return image;
+    return this._profile === "H15" && !this._photoFailed ? DEFAULT_H15_IMAGE : "";
   }
   get _profile() { return this._config?.model === "H14" ? "H14" : this._detectedProfile || deviceProfile(this._device) || "H15"; }
   get _roleMap() { return profileRoles(this._profile); }
@@ -688,7 +698,8 @@ class DreameDeviceCard extends HTMLElement {
     this._advanced = this.shadowRoot.querySelector("details")?.open ?? this._advanced;
     const ready = Object.keys(this._roles).length > 0;
     const title = this._config.title || this._device?.name_by_user || this._device?.name || "Dreame H15 Pro Heat";
-    const image = this._config.image ? `<img src="${escapeHTML(this._config.image)}" alt="${escapeHTML(title)}">` : DEVICE_ART;
+    const photo = this._photo();
+    const image = photo ? `<img class="device-photo" src="${escapeHTML(photo)}" alt="${escapeHTML(title)}">` : DEVICE_ART;
     const progress = this._progressValue();
     const ring = progress === undefined ? "" : `<svg class="progress-ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45" pathLength="100"></circle><circle class="progress-value" cx="50" cy="50" r="45" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${100 - progress}"></circle></svg>`;
     const progressLabel = progress === undefined ? "" : `<div class="progress-label" role="progressbar" aria-label="${escapeHTML(this._t(this._activityTone() === "cleaning" ? "clean_progress" : "dry_progress"))}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress}">${progress}%</div>`;
