@@ -690,3 +690,18 @@ test('the card has no footer caption and the editor can set or clear the height'
   editor._change({ target: { dataset: { field: 'height' }, value: '' } });
   assert.equal(editor._config.height, undefined);
 });
+
+test('H15 shows the bundled app photo by default; H14, image: none and custom images are respected', () => {
+  const widget = card();
+  assert.equal(widget._photo(), '/local/community/dreame-device-card/h15_pro_heat_app.png');
+  widget._config = { language: 'en', model: 'H14' };
+  assert.equal(widget._photo(), '');
+  widget._config = { language: 'en', image: 'none' };
+  assert.equal(widget._photo(), '');
+  assert.equal(get('validateConfig')({ image: 'none' }).image, 'none');
+  widget._config = { language: 'en', image: '/local/mine.png' };
+  assert.equal(widget._photo(), '/local/mine.png');
+  widget._config = { language: 'en' };
+  widget.shadowRoot._handlers.error({ target: { classList: { contains: (n) => n === 'device-photo' } } });
+  assert.equal(widget._photo(), '');
+});
