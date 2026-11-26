@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.2.2 — 2026-11-26
+
+- The H15 Pro Heat photo now ships with the card (`dist/h15_pro_heat_app.png`) and is shown by default, so no separate image upload or `image` option is needed. `image: none` brings back the drawing; a custom `image` still wins. H14 keeps the drawing.
+- If the bundled photo can't load (e.g. a manual install without it), the card falls back to the drawing once instead of retrying on every update.
+
 ## v1.2.0 — 2026-11-26
 
 - New `height` option (also in the visual editor): fixed card size on every tab, content scrolls inside.
