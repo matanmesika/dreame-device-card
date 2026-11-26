@@ -74,7 +74,7 @@ HACS adds the resource `/hacsfiles/dreame-device-card/dreame-device-card.js` for
 
 ### Manual
 
-Copy `dist/dreame-device-card.js` to `<config>/www/dreame-device-card.js`, then add `/local/dreame-device-card.js` as a **JavaScript module** under **Settings → Dashboards → ⋮ → Resources**. Don't register both the manual and the HACS resource.
+Copy `dist/dreame-device-card.js` and `dist/h15_pro_heat_app.png` to `<config>/www/community/dreame-device-card/`, then add `/local/community/dreame-device-card/dreame-device-card.js` as a **JavaScript module** under **Settings → Dashboards → ⋮ → Resources**. Don't register both the manual and the HACS resource.
 
 ## Setup
 
@@ -119,7 +119,7 @@ With a device selected, controls (buttons, selects, switches, numbers) must belo
 | `title` | device name | Heading shown above the activity. |
 | `language` | Home Assistant language | `en` or `he`. |
 | `height` | automatic | Fixed card height in pixels. Every tab keeps the same size and the content scrolls inside. Leave it out to let the card grow with each tab. |
-| `image` | built-in drawing | A `/local/…` or `/hacsfiles/…` picture for the round device badge. |
+| `image` | H15: photo shipped with the card · H14: built-in drawing | A `/local/…` or `/hacsfiles/…` picture for the device, or `none` for the built-in drawing. |
 | `entities` | automatic | Per-role overrides (see below). |
 
 ### Entities the card uses
