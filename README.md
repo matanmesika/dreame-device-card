@@ -192,6 +192,10 @@ Every role is optional. A missing entity hides its row instead of showing a wron
 
 The Dreame wordmark comes from [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Logo_of_Dreame.svg) (CC BY-SA 4.0, credited to Dreame Technology). This is an unofficial project, not affiliated with Dreame. Dreame's trademarks belong to their owner.
 
+## License
+
+[MIT](LICENSE) © 2026 Matan Mesika
+
 ---
 
 ## עברית — בקצרה
